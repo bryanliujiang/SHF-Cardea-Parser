@@ -28,8 +28,12 @@ char init_DELIMITER_CSV();
 /* Ignore; for tracking duplicates */
 std::string potential_duplicate_to_warn;
 std::string potential_duplicate_to_remove;
-std::unordered_set<std::string> rows_scanned;
+std::string potential_swap;
+std::unordered_set<std::string> rows_scanned_for_duplicates;
+std::unordered_set<std::string> rows_scanned_for_swaps;
 std::unordered_multiset<std::string> list_of_duplicates;
+std::unordered_multiset<std::string> list_of_swaps;
+std::string swapped(std::string potential_duplicate);
 
 /* Ignore; for tracking logs */
 void CreateLogFile();
@@ -93,6 +97,7 @@ void RemoveDuplicatesFrom(std::ifstream& input); // produces out for Cardea with
 void remove_spaces_from_this(std::string& entry); // any entry given will have its whitespaces removed
 void warn_duplicates_including_this(std::string entry); // duplicate must match this entry to be warned of in RemoveDuplicatesFrom()
 void remove_duplicates_including_this(std::string entry); // duplicate must match this entry to be removed in RemoveDuplicatesFrom()
+void swap_duplicate_includes_this(std::string entry); // first two entries given would be considered a duplicate if swapped; RemoveDuplicatesFrom()
 bool file_exists(std::string path, std::string file); // tells whether file from given path exists
 std::string add_log(std::string log); // entry given will be appended to the log file; returns log message itself
 std::string nine_digit_phone_number(std::string digits); // formats raw nine digits into a phone number compatible with Cardea
@@ -730,10 +735,12 @@ void RemoveDuplicatesFrom(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // B (LastName)
             remove_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be removed
             warn_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be warned of
+            swap_duplicate_includes_this(cell); // use this cell as a marker for a potential swap with one other cell
 
             std::getline(iss, cell, DELIMITER_CLEAN); // C (FirstName)
             remove_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be removed
             warn_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be warned of
+            swap_duplicate_includes_this(cell); // use this cell as a marker for a potential swap with one other cell
 
             std::getline(iss, cell, DELIMITER_CLEAN); // D (Email)
             // ignore column
@@ -800,54 +807,71 @@ void RemoveDuplicatesFrom(std::ifstream& input)
 
             if (current_iteration == 0)
             {
-                auto found = rows_scanned.find(potential_duplicate_to_warn);
-                if (found == rows_scanned.end())
+                auto find_to_remove = rows_scanned_for_duplicates.find(potential_duplicate_to_remove);
+                if (find_to_remove == rows_scanned_for_duplicates.end())
                 {
-                    rows_scanned.insert(potential_duplicate_to_warn);
-                }
-                else
-                {
-                    list_of_duplicates.insert(potential_duplicate_to_warn);
-                }
-                potential_duplicate_to_warn.erase();
-
-                found = rows_scanned.find(potential_duplicate_to_remove);
-                if (found == rows_scanned.end())
-                {
-                    rows_scanned.insert(potential_duplicate_to_remove);
+                    rows_scanned_for_duplicates.insert(potential_duplicate_to_remove);
                 }
                 else
                 {
                     list_of_duplicates.insert(potential_duplicate_to_remove);
                 }
-                potential_duplicate_to_remove.erase();
+
+                auto find_to_warn = rows_scanned_for_duplicates.find(potential_duplicate_to_warn);
+                if (find_to_warn == rows_scanned_for_duplicates.end())
+                {
+                    rows_scanned_for_duplicates.insert(potential_duplicate_to_warn);
+                }
+                else
+                {
+                    list_of_duplicates.insert(potential_duplicate_to_warn);
+                }
+
+                auto find_swapped = rows_scanned_for_swaps.find(potential_swap);
+                if (find_swapped == rows_scanned_for_swaps.end())
+                {
+                    rows_scanned_for_swaps.insert(swapped(potential_swap));
+                }
+                else
+                {
+                    list_of_swaps.insert(potential_swap);
+                }
             }
             else if (current_iteration == 1)
             {
-                auto found = list_of_duplicates.find(potential_duplicate_to_remove);
-                if (found == list_of_duplicates.end())
+                auto find_to_remove = list_of_duplicates.find(potential_duplicate_to_remove);
+                if (find_to_remove == list_of_duplicates.end())
                 {
                     std::replace(row.begin(), row.end(), DELIMITER_CLEAN, DELIMITER_CSV);
                     output << row << '\n';
 
-                    found = list_of_duplicates.find(potential_duplicate_to_warn);
-                    if (found != list_of_duplicates.end())
+                    auto find_to_warn = list_of_duplicates.find(potential_duplicate_to_warn);
+                    if (find_to_warn != list_of_duplicates.end())
                     {
-                        list_of_duplicates.erase(found, std::next(found));
+                        list_of_duplicates.erase(find_to_warn, std::next(find_to_warn));
                         std::cout << add_log("[ WARNING ] Potential duplicate: Row " + std::to_string(row_number)) << std::endl;
                     }
-                    potential_duplicate_to_warn.erase();
                 }
                 else
                 {
-                    list_of_duplicates.erase(found, std::next(found));
+                    list_of_duplicates.erase(find_to_remove, std::next(find_to_remove));
                     std::cout << add_log("[ INFO ] Duplicate removed: Row " + std::to_string(row_number)) << std::endl;
 
-                    found = list_of_duplicates.find(potential_duplicate_to_warn);
-                    list_of_duplicates.erase(found, std::next(found));
+                    auto find_to_warn = list_of_duplicates.find(potential_duplicate_to_warn);
+                    list_of_duplicates.erase(find_to_warn, std::next(find_to_warn));
                 }
-                potential_duplicate_to_remove.erase();
+
+                auto find_swapped = list_of_swaps.find(potential_swap);
+                if (find_swapped != list_of_swaps.end())
+                {
+                    list_of_swaps.erase(find_swapped, std::next(find_swapped));
+                    std::cout << add_log("[ WARNING ] Potential duplicate (name swap): Row " + std::to_string(row_number)) << std::endl;
+                }
             }
+
+            potential_duplicate_to_remove.erase();
+            potential_duplicate_to_warn.erase();
+            potential_swap.erase();
         }
 
         input.clear();
@@ -923,9 +947,34 @@ void remove_duplicates_including_this(std::string entry)
     potential_duplicate_to_remove += entry + DELIMITER_CLEAN;
 }
 
+void swap_duplicate_includes_this(std::string entry)
+{
+    potential_swap += entry + DELIMITER_CLEAN;
+}
+
+std::string swapped(std::string potential_duplicate)
+{
+    std::istringstream iss(potential_duplicate);
+    std::string cell;
+    std::getline(iss, cell, DELIMITER_CLEAN);
+    std::string first_cell = cell;
+    std::getline(iss, cell, DELIMITER_CLEAN);
+    std::string second_cell = cell;
+    std::getline(iss, cell);
+    std::string other_cells = cell;
+    
+    std::string original_copy = potential_swap;
+    potential_swap.erase();
+    swap_duplicate_includes_this(second_cell);
+    swap_duplicate_includes_this(first_cell);
+    std::string swapped_copy = potential_swap + other_cells;
+    potential_swap = original_copy;
+    return swapped_copy;
+}
+
 void CreateLogFile()
 {
-    std::cout << "Generating log file '" + NAME_LOG + "' . . .\n" << std::endl;
+    std::cout << "\nGenerating log file '" + NAME_LOG + "' . . .\n" << std::endl;
     
     std::ofstream logfile;
     logfile.open(NAME_LOG, std::ofstream::app); // if log already exists, append to it
