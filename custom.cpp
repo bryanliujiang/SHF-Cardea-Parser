@@ -95,9 +95,7 @@ void RemoveDuplicatesFrom(std::ifstream& input); // produces out for Cardea with
 
 /* Other useful functions */
 void remove_spaces_from_this(std::string& entry); // any entry given will have its whitespaces removed
-void warn_duplicates_including_this(std::string entry); // duplicate must match this entry to be warned of in RemoveDuplicatesFrom()
-void remove_duplicates_including_this(std::string entry); // duplicate must match this entry to be removed in RemoveDuplicatesFrom()
-void swap_duplicate_includes_this(std::string entry); // first two entries given would be considered a duplicate if swapped; RemoveDuplicatesFrom()
+void track_duplicates_including_this(std::string entry, bool to_warn, bool for_swap, bool to_remove); // specifies handling duplicates
 bool file_exists(std::string path, std::string file); // tells whether file from given path exists
 std::string add_log(std::string log); // entry given will be appended to the log file; returns log message itself
 std::string nine_digit_phone_number(std::string digits); // formats raw nine digits into a phone number compatible with Cardea
@@ -733,14 +731,10 @@ void RemoveDuplicatesFrom(std::ifstream& input)
             // ignore column
 
             std::getline(iss, cell, DELIMITER_CLEAN); // B (LastName)
-            remove_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be removed
-            warn_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be warned of
-            swap_duplicate_includes_this(cell); // use this cell as a marker for a potential swap with one other cell
+            track_duplicates_including_this(cell, true, true, true);
 
             std::getline(iss, cell, DELIMITER_CLEAN); // C (FirstName)
-            remove_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be removed
-            warn_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be warned of
-            swap_duplicate_includes_this(cell); // use this cell as a marker for a potential swap with one other cell
+            track_duplicates_including_this(cell, true, true, true);
 
             std::getline(iss, cell, DELIMITER_CLEAN); // D (Email)
             // ignore column
@@ -749,13 +743,13 @@ void RemoveDuplicatesFrom(std::ifstream& input)
             // ignore column
 
             std::getline(iss, cell, DELIMITER_CLEAN); // F (PGPhone)
-            remove_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be removed
+            track_duplicates_including_this(cell, false, false, true);
 
             std::getline(iss, cell, DELIMITER_CLEAN); // G (Race)
             // ignore column
 
             std::getline(iss, cell, DELIMITER_CLEAN); // H (Birthdate)
-            remove_duplicates_including_this(cell); // use this cell as a marker for a duplicate to be removed
+            track_duplicates_including_this(cell, false, false, true);
 
             std::getline(iss, cell, DELIMITER_CLEAN); // I (Gender)
             // ignore column
@@ -937,19 +931,24 @@ std::string consent_form_file_name(std::string screeningName, std::string ID, st
     return full; // produced full consent form file name with variables inserted
 }
 
-void warn_duplicates_including_this(std::string entry)
+void track_duplicates_including_this(std::string entry, bool to_warn=true, bool for_swap=false, bool to_remove=false)
 {
-    potential_duplicate_to_warn += entry + DELIMITER_CLEAN;
-}
+    std::transform(entry.begin(), entry.end(), entry.begin(), ::tolower);
 
-void remove_duplicates_including_this(std::string entry)
-{
-    potential_duplicate_to_remove += entry + DELIMITER_CLEAN;
-}
+    if (to_warn)
+    {
+        potential_duplicate_to_warn += entry + DELIMITER_CLEAN;
+    }
 
-void swap_duplicate_includes_this(std::string entry)
-{
-    potential_swap += entry + DELIMITER_CLEAN;
+    if (for_swap)
+    {
+        potential_swap += entry + DELIMITER_CLEAN;
+    }
+
+    if (to_remove)
+    {
+        potential_duplicate_to_remove += entry + DELIMITER_CLEAN;
+    }
 }
 
 std::string swapped(std::string potential_duplicate)
@@ -965,8 +964,8 @@ std::string swapped(std::string potential_duplicate)
     
     std::string original_copy = potential_swap;
     potential_swap.erase();
-    swap_duplicate_includes_this(second_cell);
-    swap_duplicate_includes_this(first_cell);
+    track_duplicates_including_this(second_cell, false, true, false);
+    track_duplicates_including_this(first_cell, false, true, false);
     std::string swapped_copy = potential_swap + other_cells;
     potential_swap = original_copy;
     return swapped_copy;
