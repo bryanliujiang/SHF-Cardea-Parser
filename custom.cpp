@@ -12,7 +12,7 @@
 #include <iterator>
 #include <filesystem> // requires C++17
 
-/* Ignore; for parameter initialization */
+/* Ignore; for parameter initialization upon program start */
 std::string init_NAME_INPUT();
 std::string init_NAME_OUTPUT();
 std::string init_NAME_EVENT();
@@ -26,25 +26,7 @@ std::string init_NAME_ENGLISH();
 char init_DELIMITER_CLEAN();
 char init_DELIMITER_CSV();
 
-/* Ignore; for tracking duplicates */
-std::string potential_duplicate_to_warn;
-std::string potential_duplicate_to_remove;
-std::string potential_swap;
-std::unordered_set<std::string> rows_scanned_for_duplicates;
-std::unordered_set<std::string> rows_scanned_for_swaps;
-std::unordered_map<std::string, std::vector<int>> list_of_duplicates_found;
-std::unordered_map<std::string, std::vector<int>> list_of_swaps_found;
-std::unordered_multiset<std::string> list_of_duplicates;
-std::unordered_multiset<std::string> list_of_swaps;
-std::string swapped(std::string potential_duplicate);
-
-/* Ignore; for tracking logs */
-void CreateLogFile();
-std::vector<std::string> logs;
-
-
-
-/* Freely adjust any of the following parameters */
+/* Can freely initialize any of the following parameters */
 const std::string NAME_INPUT = init_NAME_INPUT(); // name of input csv to parse
 const std::string NAME_OUTPUT = init_NAME_OUTPUT(); // desired name of parsed output csv for Cardea
 const std::string NAME_EVENT = init_NAME_EVENT(); // name of current screening event based on naming of consent form file
@@ -52,7 +34,7 @@ const std::string NAME_FORM_PATH = init_NAME_FORM_PATH(); // directory path to t
 const std::string FORM_YES = init_FORM_YES(); // what to print into Consent column of output csv if consent form exists
 const std::string FORM_NO = init_FORM_NO(); // what to print into Consent column of output csv if consent form does not exist
 
-/* Be more wary about changing the following parameters */
+/* Should be more wary about initializing the following parameters */
 const std::string NAME_LOG = init_NAME_LOG(); // desired name of log file detailing program events
 const std::string NAME_INPUT_CLEAN = init_NAME_INPUT_CLEAN(); // ignore; needed to sanitize input properly
 const std::string NAME_OUTPUT_DUPLICATES = init_NAME_OUTPUT_DUPLICATES(); // ignore; needed to remove duplicates properly
@@ -60,7 +42,7 @@ const std::string NAME_ENGLISH = init_NAME_ENGLISH(); // how it was indicated in
 const char DELIMITER_CLEAN = init_DELIMITER_CLEAN(); // which singular character to forbid while filling out forms; needed to sanitize input properly
 const char DELIMITER_CSV = init_DELIMITER_CSV(); // how raw input csv delimits cells; needs to be cleaned out by sanitizer function
 
-/* Changing the following parameters may require code to be edited */
+/* Cannot initialize the following parameters since source code might have to be adjusted */
 const std::string NAME_FORM = "SHF-Consent_ _ _ _ -SIGNED.pdf"; // consent form file name, adding a whitespace where a variable is
 const int NUM_LANG_FIELDS = 10; // number of columns unique to a language
 const std::vector<std::string> HEADERS = // names and order of headers for output csv
@@ -93,25 +75,41 @@ const std::vector<std::string> HEADERS = // names and order of headers for outpu
 
 /* Parser functions used in the program */
 void Parse(); // runs the program workflow: Sanitize() -> MakeCardeaCompatible() -> RemoveDuplicatesFrom()
-void Sanitize(std::ifstream& input); // sanitizes input, produces sanitized output
-void MakeCardeaCompatible(std::ifstream& input); // parses input according to Cardea, produces proper output for Cardea
-void RemoveDuplicatesFrom(std::ifstream& input); // produces out for Cardea without duplicates
+void Sanitize(std::ifstream& input); // sanitizes input and produces sanitized output file for processing
+void MakeCardeaCompatible(std::ifstream& input); // parses sanitized input according to Cardea, produces proper output for Cardea
+void RemoveDuplicatesFrom(std::ifstream& input); // produces output for Cardea without duplicates and/or with warnings of them
+void CreateLogFile(); // appends to log file significant program events
 
-/* Other useful functions */
+/* Assets intended for MakeCardeaCompatible() */
 void remove_spaces_from_this(std::string& entry); // any entry given will have its whitespaces removed
-void track_duplicates_including_this(std::string entry, bool to_warn, bool for_swap, bool to_remove); // specifies handling duplicates
 bool file_exists(std::string path, std::string file); // tells whether file from given path exists
-std::string add_log(std::string log); // entry given will be appended to the log file; returns log message itself
 std::string nine_digit_phone_number(std::string digits); // formats raw nine digits into a phone number compatible with Cardea
 std::string consent_form_file_name(std::string screeningName, std::string ID,
     std::string LN, std::string FN, std::string format); // generates consent form file name based on the NAME_FORM format
+
+/* Assets intended for RemoveDuplicatesFrom() */
+void track_duplicates_including_this(std::string entry, bool to_warn, bool for_swap, bool to_remove); // specifies handling duplicates
+std::string swapped(std::string potential_duplicate); // swaps first two entries of columns tracked for swaps
+std::string potential_duplicate_to_warn; // string representation of entries tracked for duplicates to warn of
+std::string potential_duplicate_to_remove; // string representation of a row of entries tracked for duplicates to remove
+std::string potential_swap; // string representation of a row of entries tracked for swaps
+std::unordered_set<std::string> rows_scanned_for_duplicates; // holds strings to check against for duplicates to remove and/or warn of
+std::unordered_set<std::string> rows_scanned_for_swaps; // holds strings to check against for swaps
+std::unordered_multiset<std::string> list_of_duplicates; // holds strings of confirmed duplicates to remove and/or warn of
+std::unordered_multiset<std::string> list_of_swaps; // holds strings of confirmed swaps
+std::unordered_map<std::string, std::vector<int>> list_of_duplicates_found; // holds locations of rows involved with duplicates
+std::unordered_map<std::string, std::vector<int>> list_of_swaps_found; // holds locations of rows involved with swaps
+
+/* Assets for CreateLogFile() */
+std::string add_log(std::string log); // entry given will be appended to the log file; returns log message itself
+std::vector<std::string> logs; // holds log entries
 
 /* Actual program */
 int main()
 {
     Parse(); // run the parser functions based on configured parameters
 
-    CreateLogFile(); // generate log file of significant events that occurred during the program
+    CreateLogFile(); // appends to log file the significant events that occurred during the program
 
     std::cout << "You may close the program or press ENTER to exit." << std::endl;
     std::cin.ignore();
@@ -120,6 +118,7 @@ int main()
 }
 
 /* Function definitions */
+/* Parser functions used in the program */
 void Parse()
 {
    ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -949,6 +948,41 @@ void RemoveDuplicatesFrom(std::ifstream& input)
     }
 }
 
+void CreateLogFile()
+{
+    std::cout << "\nCopying to log file '" + NAME_LOG + "' . . .\n" << std::endl;
+
+    std::ofstream logfile;
+    logfile.open(NAME_LOG, std::ofstream::app); // if log already exists, append to it
+
+    logfile << "=================================================================================" << std::endl;
+    logfile << "NOTE: Any locations are referencing the raw input .csv file, not the output file!" << std::endl;
+    logfile << "Events that occurred during the last run of the program:\n" << std::endl;
+    for (auto log : logs)
+    {
+        logfile << log << std::endl;
+    }
+
+    logfile << "\n\nThe program was last run using the following parameters:\n" << std::endl;
+    logfile <<
+        "NAME_INPUT \t\t: \"" + NAME_INPUT + "\"\n"
+        "NAME_OUTPUT \t\t: \"" + NAME_OUTPUT + "\"\n"
+        "NAME_EVENT \t\t: \"" + NAME_EVENT + "\"\n"
+        "NAME_FORM_PATH \t\t: \"" + NAME_FORM_PATH + "\"\n"
+        "FORM_YES \t\t: \"" + FORM_YES + "\"\n"
+        "FORM_NO \t\t: \"" + FORM_NO + "\"\n"
+        "NAME_LOG \t\t: \"" + NAME_LOG + "\"\n"
+        "NAME_INPUT_CLEAN \t: \"" + NAME_INPUT_CLEAN + "\"\n"
+        "NAME_OUTPUT_DUPLICATES \t: \"" + NAME_OUTPUT_DUPLICATES + "\"\n"
+        "NAME_ENGLISH \t\t: \"" + NAME_ENGLISH + "\"\n"
+        "DELIMITER_CLEAN \t: '" + DELIMITER_CLEAN + "'\n"
+        "DELIMITER_CSV \t\t: '" + DELIMITER_CSV + "'\n"
+        << std::endl;
+
+    logfile.close();
+}
+
+/* Functions intended for MakeCardeaCompatible() */
 void remove_spaces_from_this(std::string& entry)
 {
     /*
@@ -1004,6 +1038,7 @@ std::string consent_form_file_name(std::string screeningName, std::string ID, st
     return full; // produced full consent form file name with variables inserted
 }
 
+/* Functions intended for RemoveDuplicatesFrom() */
 void track_duplicates_including_this(std::string entry, bool to_warn=true, bool for_swap=false, bool to_remove=false)
 {
     std::transform(entry.begin(), entry.end(), entry.begin(), ::tolower);
@@ -1044,40 +1079,7 @@ std::string swapped(std::string potential_duplicate)
     return swapped_copy;
 }
 
-void CreateLogFile()
-{
-    std::cout << "\nCopying to log file '" + NAME_LOG + "' . . .\n" << std::endl;
-    
-    std::ofstream logfile;
-    logfile.open(NAME_LOG, std::ofstream::app); // if log already exists, append to it
-
-    logfile << "=================================================================================" << std::endl;
-    logfile << "NOTE: Any locations are referencing the raw input .csv file, not the output file!" << std::endl;
-    logfile << "Events that occurred during the last run of the program:\n" << std::endl;
-    for (auto log : logs)
-    {
-        logfile << log << std::endl;
-    }
-
-    logfile << "\n\nThe program was last run using the following parameters:\n" << std::endl;
-    logfile <<
-        "NAME_INPUT \t\t: \"" + NAME_INPUT + "\"\n"
-        "NAME_OUTPUT \t\t: \"" + NAME_OUTPUT + "\"\n"
-        "NAME_EVENT \t\t: \"" + NAME_EVENT + "\"\n"
-        "NAME_FORM_PATH \t\t: \"" + NAME_FORM_PATH + "\"\n"
-        "FORM_YES \t\t: \"" + FORM_YES + "\"\n"
-        "FORM_NO \t\t: \"" + FORM_NO + "\"\n"
-        "NAME_LOG \t\t: \"" + NAME_LOG + "\"\n"
-        "NAME_INPUT_CLEAN \t: \"" + NAME_INPUT_CLEAN + "\"\n"
-        "NAME_OUTPUT_DUPLICATES \t: \"" + NAME_OUTPUT_DUPLICATES + "\"\n"
-        "NAME_ENGLISH \t\t: \"" + NAME_ENGLISH + "\"\n"
-        "DELIMITER_CLEAN \t: '" + DELIMITER_CLEAN + "'\n"
-        "DELIMITER_CSV \t\t: '" + DELIMITER_CSV + "'\n"
-        << std::endl;
-
-    logfile.close();
-}
-
+/* Functions for CreateLogFile() */
 std::string add_log(std::string log)
 {
     logs.push_back(log);
@@ -1085,6 +1087,7 @@ std::string add_log(std::string log)
     return log; // return the original log string for convenience of printing messages to console
 }
 
+/* Functions for parameter initialization upon program start */
 std::string init_NAME_INPUT()
 {
     std::string name;
