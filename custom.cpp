@@ -1157,7 +1157,7 @@ std::string init_NAME_FORM_PATH()
     std::getline(std::cin, name);
     if (name.empty())
     {
-        return "C:\\Users";
+        return "C:\\Users"; // escaped backslash character which is why there are two
     }
     else
     {
