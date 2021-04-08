@@ -265,7 +265,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // second cell (B)
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: MSN column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in MSN column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -282,7 +282,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: Language column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Language column of row " + std::to_string(row_number)) << std::endl;
             inEnglish = true; // assume in English anyway
         }
         else if (cell == "English")
@@ -302,7 +302,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell); // this cell should not contain any space
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: LastName column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in LastName column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -315,7 +315,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: FirstName column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in FirstName column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -327,7 +327,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // G
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: Email column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Email column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -345,7 +345,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: PGNam column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in PGNam column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -360,7 +360,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: PGPhone column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in PGPhone column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -383,7 +383,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // Q
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: Race column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Race column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -394,7 +394,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // R
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: Birthdate column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Birthdate column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -405,7 +405,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // S
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: Gender column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Gender column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -416,7 +416,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // T
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: Weight column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Weight column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -428,7 +428,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: Height (ft) column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Height (ft) column of row " + std::to_string(row_number)) << std::endl;
             ; // do nothing if empty (explicit here to emphasize adding the delimiter for the next cell)
         }
         else // cell is not empty
@@ -440,7 +440,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: Height (in) column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Height (in) column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -454,7 +454,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // X
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell: Sport column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Sport column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -470,7 +470,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // Z
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English OMI column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English OMI column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -481,7 +481,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AA
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English Meds column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English Meds column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -492,7 +492,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AB
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English ExPain column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English ExPain column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -503,7 +503,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AC
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English Sync column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English Sync column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -514,7 +514,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AD
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English SOB column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English SOB column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -525,7 +525,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AE
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English Murmur column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English Murmur column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -536,7 +536,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AF
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English HiBP column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English HiBP column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -547,7 +547,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AG
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English FamHist column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English FamHist column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -558,7 +558,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AH
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English OMI column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English OMI column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -569,7 +569,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AI
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: English FamDisabled column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English FamDisabled column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -587,7 +587,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AJ
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish OMI column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish OMI column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -598,7 +598,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AK
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish Meds column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish Meds column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -609,7 +609,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AL
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish ExPain column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish ExPain column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -620,7 +620,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AM
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish Sync column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish Sync column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -631,7 +631,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AN
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish SOB column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish SOB column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -642,7 +642,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AO
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish Murmur column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish Murmur column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -653,7 +653,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AP
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish HiBP column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish HiBP column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -664,7 +664,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AQ
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish FamHist column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish FamHist column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -675,7 +675,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AR
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish SCD column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish SCD column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -686,7 +686,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AS
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell: Spanish FamDisabled column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish FamDisabled column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -927,12 +927,12 @@ void RemoveDuplicatesFrom(std::ifstream& input)
             if (found.first[0] == DELIMITER_CLEAN) // is a potential duplicate to remove
             {
                 std::cout << add_log("[ DELETION ] Removed duplicate of Row " + std::to_string(found.second.back())
-                    + " that was on Row " + std::to_string(row_num)) << std::endl;
+                    + " that was found earlier on Row " + std::to_string(row_num)) << std::endl;
             }
             else // is a potential duplicate to warn of
             {
                 std::cout << add_log("[ WARNING ] Potential duplicate of Row " + std::to_string(found.second.back())
-                    + " found earlier on Row " + std::to_string(row_num)) << std::endl;
+                    + " was found earlier on Row " + std::to_string(row_num)) << std::endl;
             }
         }
     }
