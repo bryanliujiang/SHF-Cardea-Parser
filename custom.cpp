@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 #include <fstream>
 #include <sstream>
 #include <cstdio>
@@ -31,6 +32,8 @@ std::string potential_duplicate_to_remove;
 std::string potential_swap;
 std::unordered_set<std::string> rows_scanned_for_duplicates;
 std::unordered_set<std::string> rows_scanned_for_swaps;
+std::unordered_map<std::string, std::vector<int>> list_of_duplicates_found;
+std::unordered_map<std::string, std::vector<int>> list_of_swaps_found;
 std::unordered_multiset<std::string> list_of_duplicates;
 std::unordered_multiset<std::string> list_of_swaps;
 std::string swapped(std::string potential_duplicate);
@@ -39,7 +42,7 @@ std::string swapped(std::string potential_duplicate);
 void CreateLogFile();
 std::vector<std::string> logs;
 
-void Parse();
+
 
 /* Freely adjust any of the following parameters */
 const std::string NAME_INPUT = init_NAME_INPUT(); // name of input csv to parse
@@ -89,6 +92,7 @@ const std::vector<std::string> HEADERS = // names and order of headers for outpu
 };
 
 /* Parser functions used in the program */
+void Parse(); // runs the program workflow: Sanitize() -> MakeCardeaCompatible() -> RemoveDuplicatesFrom()
 void Sanitize(std::ifstream& input); // sanitizes input, produces sanitized output
 void MakeCardeaCompatible(std::ifstream& input); // parses input according to Cardea, produces proper output for Cardea
 void RemoveDuplicatesFrom(std::ifstream& input); // produces out for Cardea without duplicates
@@ -108,6 +112,9 @@ int main()
     Parse(); // run the parser functions based on configured parameters
 
     CreateLogFile(); // generate log file of significant events that occurred during the program
+
+    std::cout << "You may close the program or press ENTER to exit." << std::endl;
+    std::cin.ignore();
 
     return 0; // end of program
 }
@@ -259,7 +266,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // second cell (B)
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: MSN column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: MSN column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -276,7 +283,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: Language column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: Language column of row " + std::to_string(row_number)) << std::endl;
             inEnglish = true; // assume in English anyway
         }
         else if (cell == "English")
@@ -296,7 +303,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell); // this cell should not contain any space
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: LastName column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: LastName column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -309,7 +316,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: FirstName column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: FirstName column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -321,7 +328,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // G
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: Email column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: Email column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -339,7 +346,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: PGNam column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: PGNam column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -354,7 +361,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: PGPhone column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: PGPhone column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -377,7 +384,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // Q
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: Race column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: Race column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -388,7 +395,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // R
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: Birthdate column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: Birthdate column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -399,7 +406,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // S
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: Gender column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: Gender column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -410,7 +417,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // T
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: Weight column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: Weight column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -422,7 +429,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: Height (ft) column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: Height (ft) column of row " + std::to_string(row_number)) << std::endl;
             ; // do nothing if empty (explicit here to emphasize adding the delimiter for the next cell)
         }
         else // cell is not empty
@@ -434,7 +441,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: Height (in) column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: Height (in) column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -448,7 +455,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // X
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ WARNING ] Blank cell: Sport column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell: Sport column of row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -464,7 +471,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // Z
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English OMI column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English OMI column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -475,7 +482,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AA
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English Meds column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English Meds column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -486,7 +493,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AB
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English ExPain column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English ExPain column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -497,7 +504,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AC
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English Sync column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English Sync column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -508,7 +515,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AD
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English SOB column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English SOB column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -519,7 +526,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AE
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English Murmur column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English Murmur column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -530,7 +537,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AF
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English HiBP column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English HiBP column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -541,7 +548,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AG
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English FamHist column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English FamHist column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -552,7 +559,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AH
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English OMI column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English OMI column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -563,7 +570,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AI
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: English FamDisabled column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: English FamDisabled column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -581,7 +588,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AJ
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish OMI column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish OMI column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -592,7 +599,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AK
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish Meds column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish Meds column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -603,7 +610,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AL
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish ExPain column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish ExPain column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -614,7 +621,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AM
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish Sync column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish Sync column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -625,7 +632,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AN
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish SOB column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish SOB column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -636,7 +643,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AO
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish Murmur column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish Murmur column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -647,7 +654,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AP
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish HiBP column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish HiBP column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -658,7 +665,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AQ
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish FamHist column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish FamHist column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -669,7 +676,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AR
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish SCD column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish SCD column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -680,7 +687,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AS
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ WARNING ] Blank cell: Spanish FamDisabled column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell: Spanish FamDisabled column of row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -809,6 +816,7 @@ void RemoveDuplicatesFrom(std::ifstream& input)
                 else
                 {
                     list_of_duplicates.insert(potential_duplicate_to_remove);
+                    list_of_duplicates_found.emplace(potential_duplicate_to_remove, std::vector<int>());
                 }
 
                 auto find_to_warn = rows_scanned_for_duplicates.find(potential_duplicate_to_warn);
@@ -819,16 +827,18 @@ void RemoveDuplicatesFrom(std::ifstream& input)
                 else
                 {
                     list_of_duplicates.insert(potential_duplicate_to_warn);
+                    list_of_duplicates_found.emplace(potential_duplicate_to_warn, std::vector<int>());
                 }
 
-                auto find_swapped = rows_scanned_for_swaps.find(potential_swap);
-                if (find_swapped == rows_scanned_for_swaps.end())
+                auto find_swap = rows_scanned_for_swaps.find(potential_swap);
+                if (find_swap == rows_scanned_for_swaps.end())
                 {
                     rows_scanned_for_swaps.insert(swapped(potential_swap));
                 }
                 else
                 {
                     list_of_swaps.insert(potential_swap);
+                    list_of_swaps_found.emplace(swapped(potential_swap), std::vector<int>()); // base list on original
                 }
             }
             else if (current_iteration == 1)
@@ -839,27 +849,60 @@ void RemoveDuplicatesFrom(std::ifstream& input)
                     std::replace(row.begin(), row.end(), DELIMITER_CLEAN, DELIMITER_CSV);
                     output << row << '\n';
 
+                    auto find_to_remove_last = list_of_duplicates_found.find(potential_duplicate_to_remove);
+                    if (find_to_remove_last != list_of_duplicates_found.end())
+                    {
+                        find_to_remove_last->second.push_back(row_number); // last number will always be duplicate to keep (the latest row)
+                    }
+
                     auto find_to_warn = list_of_duplicates.find(potential_duplicate_to_warn);
-                    if (find_to_warn != list_of_duplicates.end())
+                    if (find_to_warn == list_of_duplicates.end())
+                    {
+                        auto find_to_warn_last = list_of_duplicates_found.find(potential_duplicate_to_warn);
+                        if (find_to_warn_last != list_of_duplicates_found.end())
+                        {
+                            find_to_warn_last->second.push_back(row_number); // last number will always be duplicate to keep (the latest row)
+                        }
+                    }
+                    else
                     {
                         list_of_duplicates.erase(find_to_warn, std::next(find_to_warn));
-                        std::cout << add_log("[ WARNING ] Potential duplicate: Row " + std::to_string(row_number)) << std::endl;
+                        auto record_row = list_of_duplicates_found.find(potential_duplicate_to_warn);
+                        record_row->second.push_back(row_number);
                     }
                 }
                 else
                 {
                     list_of_duplicates.erase(find_to_remove, std::next(find_to_remove));
-                    std::cout << add_log("[ INFO ] Duplicate removed: Row " + std::to_string(row_number)) << std::endl;
+                    auto record_row = list_of_duplicates_found.find(potential_duplicate_to_remove);
+                    record_row->second.push_back(row_number);
 
                     auto find_to_warn = list_of_duplicates.find(potential_duplicate_to_warn);
-                    list_of_duplicates.erase(find_to_warn, std::next(find_to_warn));
+                    if (find_to_warn != list_of_duplicates.end())
+                    {
+                        list_of_duplicates.erase(find_to_warn, std::next(find_to_warn));
+                    }
                 }
 
-                auto find_swapped = list_of_swaps.find(potential_swap);
-                if (find_swapped != list_of_swaps.end())
+                auto find_swapped_from = list_of_swaps_found.find(potential_swap);
+                if (find_swapped_from != list_of_swaps_found.end())
                 {
-                    list_of_swaps.erase(find_swapped, std::next(find_swapped));
-                    std::cout << add_log("[ WARNING ] Potential duplicate (name swap): Row " + std::to_string(row_number)) << std::endl;
+                    std::vector<int>& record_of_row_numbers = find_swapped_from->second;
+                    if (record_of_row_numbers.empty())
+                    {
+                        record_of_row_numbers.push_back(row_number);
+                    }
+                    else
+                    {
+                        record_of_row_numbers[0] = row_number; // first number will always be the latest row number of the original
+                    }
+                }
+                auto find_swap = list_of_swaps.find(potential_swap);
+                if (find_swap != list_of_swaps.end())
+                {
+                    list_of_swaps.erase(find_swap, std::next(find_swap));
+                    auto record_row = list_of_swaps_found.find(swapped(potential_swap));
+                    record_row->second.push_back(row_number);
                 }
             }
 
@@ -874,6 +917,36 @@ void RemoveDuplicatesFrom(std::ifstream& input)
     }
 
     output.close(); // finished with producing proper output for Cardea with duplicates removed
+
+    for (auto found : list_of_duplicates_found)
+    {
+        for (auto row_num : found.second)
+        {
+            if (row_num == found.second.back()) break; // done logging once row of duplicate to keep is reached (the latest row)
+
+            /*  Recall that potential duplicates to remove are tagged by the delimiter in the front! See track_duplicates_including_this() */
+            if (found.first[0] == DELIMITER_CLEAN) // is a potential duplicate to remove
+            {
+                std::cout << add_log("[ DELETION ] Removed duplicate of Row " + std::to_string(found.second.back())
+                    + " that was on Row " + std::to_string(row_num)) << std::endl;
+            }
+            else // is a potential duplicate to warn of
+            {
+                std::cout << add_log("[ WARNING ] Potential duplicate of Row " + std::to_string(found.second.back())
+                    + " found earlier on Row " + std::to_string(row_num)) << std::endl;
+            }
+        }
+    }
+    for (auto found : list_of_swaps_found)
+    {
+        for (auto row_num : found.second)
+        {
+            if (row_num == found.second.front()) continue; // skip logging first number since it is the row number of the original itself
+
+            std::cout << add_log("[ WARNING ] Potential duplicate (swapped first/last names) between Row " + std::to_string(row_num)
+                + " and Row " + std::to_string(found.second.front())) << std::endl;
+        }
+    }
 }
 
 void remove_spaces_from_this(std::string& entry)
@@ -947,7 +1020,7 @@ void track_duplicates_including_this(std::string entry, bool to_warn=true, bool 
 
     if (to_remove)
     {
-        potential_duplicate_to_remove += entry + DELIMITER_CLEAN;
+        potential_duplicate_to_remove += DELIMITER_CLEAN + entry; // all potential duplicates to remove are tagged by the delimiter in the front!
     }
 }
 
@@ -973,7 +1046,7 @@ std::string swapped(std::string potential_duplicate)
 
 void CreateLogFile()
 {
-    std::cout << "\nGenerating log file '" + NAME_LOG + "' . . .\n" << std::endl;
+    std::cout << "\nCopying to log file '" + NAME_LOG + "' . . .\n" << std::endl;
     
     std::ofstream logfile;
     logfile.open(NAME_LOG, std::ofstream::app); // if log already exists, append to it
