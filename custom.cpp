@@ -83,7 +83,7 @@ void CreateLogFile(); // appends to log file significant program events
 /* Assets intended for MakeCardeaCompatible() */
 void remove_spaces_from_this(std::string& entry); // any entry given will have its whitespaces removed
 bool file_exists(std::string path, std::string file); // tells whether file from given path exists
-std::string nine_digit_phone_number(std::string digits); // formats raw nine digits into a phone number compatible with Cardea
+std::string ten_digit_phone_number(std::string digits); // formats raw ten digits into a phone number compatible with Cardea
 std::string consent_form_file_name(std::string screeningName, std::string ID,
     std::string LN, std::string FN, std::string format); // generates consent form file name based on the NAME_FORM format
 
@@ -349,7 +349,12 @@ void MakeCardeaCompatible(std::ifstream& input)
         }
         else // cell is not empty
         {
-            output << nine_digit_phone_number(cell) << DELIMITER_CLEAN; // PGPhone
+            if (cell.size() == 10 && (cell[0] == '0' || cell[0] == '1')) // USA phone number area codes cannot begin with 0 or 1
+            {
+                std::cout << add_log("[ WARNING ] Potentially invalid phone number found in PGPhone column of Row " 
+                    + std::to_string(row_number)) << std::endl;
+            }
+            output << ten_digit_phone_number(cell) << DELIMITER_CLEAN; // PGPhone
         }
 
         std::getline(iss, cell, DELIMITER_CLEAN); // M
@@ -408,19 +413,21 @@ void MakeCardeaCompatible(std::ifstream& input)
             output << cell << DELIMITER_CLEAN; // Weight
         }
 
-        std::getline(iss, cell, DELIMITER_CLEAN); // U
+        std::getline(iss, cell, DELIMITER_CLEAN); // U (Height (ft))
         remove_spaces_from_this(cell);
+        int height_in_inches = -1; // initialized as negative number since height in inches can be zero or greater
         if (cell.empty()) // checks if cell is empty
         {
             std::cout << add_log("[ BLANK ] Blank cell found in Height (ft) column of Row " + std::to_string(row_number)) << std::endl;
-            ; // do nothing if empty (explicit here to emphasize adding the delimiter for the next cell)
+            ; // do nothing if empty (explicit here to emphasize adding the delimiter only in the next cell)
         }
         else // cell is not empty
         {
-            output << cell + '-'; // setting up for Height
+            height_in_inches = std::stoi(cell) * 12; // converts cell from string to integer for program to function properly
+            output << cell + '-'; // setting up for Height column in output
         }
 
-        std::getline(iss, cell, DELIMITER_CLEAN); // V
+        std::getline(iss, cell, DELIMITER_CLEAN); // V (Height (in))
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
@@ -429,6 +436,17 @@ void MakeCardeaCompatible(std::ifstream& input)
         }
         else // cell is not empty
         {
+            if (std::stoi(cell) == height_in_inches) // ensures height (in) entered was not height (ft) converted to inches
+            {
+                cell = "0"; // correct the height (in); assumes such a mistake was made when actual height was exactly height (ft)
+                std::cout << add_log("[ CORRECTION ] Height in inches was adjusted from " + std::to_string(height_in_inches)
+                    + " inches to " + cell + " inches in Height (in) column of Row " + std::to_string(row_number)) << std::endl;
+            }
+            else if (std::stoi(cell) > 12) // warn if height (in) is greater than 12 inches but not equal to height (ft) in inches
+            {
+                std::cout << add_log("[ WARNING ] Height in inches was greater than 12 inches in Height (in) column of Row "
+                    + std::to_string(row_number)) << std::endl;
+            }
             output << cell << DELIMITER_CLEAN; // Height
         }
 
@@ -866,7 +884,7 @@ void RemoveDuplicatesFrom(std::ifstream& input)
                 }
                 else // scan did not reach end of string list (a row to remove was found)
                 {
-                    // row removed by not adding it to the final outfile
+                    // row removed by not adding it to the final output file
 
                     list_of_duplicates.erase(find_to_remove, std::next(find_to_remove)); // remove from confirmed list just one instance of duplicate to remove
                     auto record_row = list_of_duplicates_found.find(potential_duplicate_to_remove); // get the record of involved row locations for this row
@@ -1020,7 +1038,7 @@ bool file_exists(std::string path, std::string file)
     return false; // file from path does not exist
 }
 
-std::string nine_digit_phone_number(std::string digits)
+std::string ten_digit_phone_number(std::string digits)
 {
     return '(' + digits.substr(0, 3) + ')' + ' ' + digits.substr(3, 3) + '-' + digits.substr(6, 4);
 }
