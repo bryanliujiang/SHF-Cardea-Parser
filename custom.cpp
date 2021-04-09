@@ -1151,7 +1151,7 @@ std::string init_NAME_EVENT()
 
 std::string init_NAME_FORM_PATH()
 {
-    const std::string default_name = "C:\\Users\\Bryan\\SHF\\Heart Screenings\\Forms"; // escaped characters; C:\Users\Bryan\SHF\"Heart Screenings"\Forms
+    const std::string default_name = "C:\\Users\\Bryan\\SHF\\Heart Screenings\\Forms"; // escaped characters; C:\Users\Bryan\SHF\Heart Screenings\Forms
     
     std::cout << "What is the path to the consent forms? (NAME_FORM_PATH)" << std::endl;
     while (true) // keep prompting for path name until a valid path is given
