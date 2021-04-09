@@ -107,6 +107,8 @@ std::vector<std::string> logs; // holds log entries
 /* Actual program */
 int main()
 {
+    std::cout << "\nEvents that occurred during the last run of the program:\n" << std::endl;
+
     Parse(); // run the parser functions based on configured parameters
 
     CreateLogFile(); // appends to log file the significant events that occurred during the program
@@ -129,15 +131,9 @@ void Parse()
     std::ifstream raw_input(NAME_INPUT);
     if (!raw_input)
     {
-        std::cout << "\n\n" + add_log("[ ERROR ] '" + NAME_INPUT + "' could not be opened or "
+        std::cout << add_log("[ ERROR ] '" + NAME_INPUT + "' could not be opened or "
             + "does not exist.")
-            + "\nMake sure the input .csv is in the same folder as this program.\n" << std::endl;
-        std::string exit;
-        while (exit != "exit")
-        {
-            std::cout << "You may close the program or type 'exit' to exit." << std::endl;
-            std::getline(std::cin, exit);
-        }
+            << "\nMake sure the input .csv is in the same folder as this program.\n" << std::endl;
         return; // terminate program early due to error
     }
 
@@ -154,13 +150,7 @@ void Parse()
     std::ifstream sanitized_input(NAME_INPUT_CLEAN);
     if (!sanitized_input)
     {
-        std::cout << "\n\n" + add_log("[ ERROR ] Could not open sanitized input file.") << std::endl;
-        std::string exit;
-        while (exit != "exit")
-        {
-            std::cout << "You may close the program or type 'exit' to exit." << std::endl;
-            std::getline(std::cin, exit);
-        }
+        std::cout << add_log("[ ERROR ] Could not open sanitized input file.") << std::endl;
         return; // terminate program early due to error
     }
 
@@ -178,13 +168,7 @@ void Parse()
     std::ifstream output_with_duplicates(NAME_OUTPUT_DUPLICATES);
     if (!output_with_duplicates)
     {
-        std::cout << "\n\n" + add_log("[ ERROR ] Could not open output with duplicates file.") << std::endl;
-        std::string exit;
-        while (exit != "exit")
-        {
-            std::cout << "You may close the program or type 'exit' to exit." << std::endl;
-            std::getline(std::cin, exit);
-        }
+        std::cout << add_log("[ ERROR ] Could not open output with duplicates file.") << std::endl;
         return; // terminate program early due to error
     }
 
@@ -265,7 +249,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // second cell (B)
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in MSN column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in MSN column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -282,7 +266,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in Language column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Language column of Row " + std::to_string(row_number)) << std::endl;
             inEnglish = true; // assume in English anyway
         }
         else if (cell == "English")
@@ -302,7 +286,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell); // this cell should not contain any space
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in LastName column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in LastName column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -315,7 +299,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in FirstName column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in FirstName column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -327,7 +311,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // G
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in Email column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Email column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -345,7 +329,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in PGNam column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in PGNam column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -360,7 +344,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in PGPhone column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in PGPhone column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -383,7 +367,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // Q
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in Race column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Race column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -394,7 +378,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // R
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in Birthdate column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Birthdate column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -405,7 +389,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // S
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in Gender column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Gender column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -416,7 +400,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // T
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in Weight column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Weight column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -428,7 +412,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in Height (ft) column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Height (ft) column of Row " + std::to_string(row_number)) << std::endl;
             ; // do nothing if empty (explicit here to emphasize adding the delimiter for the next cell)
         }
         else // cell is not empty
@@ -440,7 +424,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         remove_spaces_from_this(cell);
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in Height (in) column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Height (in) column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -454,7 +438,7 @@ void MakeCardeaCompatible(std::ifstream& input)
         std::getline(iss, cell, DELIMITER_CLEAN); // X
         if (cell.empty()) // checks if cell is empty
         {
-            std::cout << add_log("[ BLANK ] Blank cell found in Sport column of row " + std::to_string(row_number)) << std::endl;
+            std::cout << add_log("[ BLANK ] Blank cell found in Sport column of Row " + std::to_string(row_number)) << std::endl;
             output << DELIMITER_CLEAN; // leave cell blank in output if empty
         }
         else // cell is not empty
@@ -470,7 +454,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // Z
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English OMI column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English OMI column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -481,7 +465,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AA
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English Meds column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English Meds column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -492,7 +476,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AB
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English ExPain column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English ExPain column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -503,7 +487,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AC
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English Sync column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English Sync column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -514,7 +498,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AD
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English SOB column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English SOB column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -525,7 +509,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AE
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English Murmur column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English Murmur column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -536,7 +520,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AF
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English HiBP column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English HiBP column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -547,7 +531,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AG
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English FamHist column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English FamHist column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -558,7 +542,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AH
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English OMI column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English OMI column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -569,7 +553,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AI
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in English FamDisabled column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in English FamDisabled column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -587,7 +571,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AJ
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish OMI column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish OMI column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -598,7 +582,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AK
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish Meds column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish Meds column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -609,7 +593,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AL
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish ExPain column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish ExPain column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -620,7 +604,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AM
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish Sync column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish Sync column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -631,7 +615,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AN
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish SOB column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish SOB column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -642,7 +626,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AO
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish Murmur column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish Murmur column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -653,7 +637,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AP
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish HiBP column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish HiBP column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -664,7 +648,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AQ
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish FamHist column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish FamHist column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -675,7 +659,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AR
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish SCD column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish SCD column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -686,7 +670,7 @@ void MakeCardeaCompatible(std::ifstream& input)
             std::getline(iss, cell, DELIMITER_CLEAN); // AS
             if (cell.empty()) // checks if cell is empty
             {
-                std::cout << add_log("[ BLANK ] Blank cell found in Spanish FamDisabled column of row " + std::to_string(row_number)) << std::endl;
+                std::cout << add_log("[ BLANK ] Blank cell found in Spanish FamDisabled column of Row " + std::to_string(row_number)) << std::endl;
                 output << DELIMITER_CLEAN; // leave cell blank in output if empty
             }
             else // cell is not empty
@@ -1017,14 +1001,20 @@ void remove_spaces_from_this(std::string& entry)
     }
 }
 
-bool file_exists(std::string path, std::string file) {
+bool file_exists(std::string path, std::string file)
+{
     /*
         Adapted from:
         https://www.reddit.com/r/cpp_questions/comments/amswlp/detecting_if_a_directory_exists_in_visual_c/efod05p/
     */
-    for (const auto& entry : std::filesystem::directory_iterator(path)) {
-        if (entry.path() == (path + '/' + file)) { // any slash works
-            return true; // file from path exists
+    if (std::filesystem::exists(path)) // default path might not be valid; check to ensure path is valid
+    {
+        for (const auto& entry : std::filesystem::directory_iterator(path)) // assumes path is valid; otherwise, program crashes
+        {
+            if (entry.path() == (path + '/' + file)) // any slash works
+            {
+                return true; // file from path exists
+            }
         }
     }
     return false; // file from path does not exist
@@ -1107,12 +1097,15 @@ std::string add_log(std::string log)
 /* Functions for parameter initialization upon program start */
 std::string init_NAME_INPUT()
 {
+    const std::string default_name = "inputForCardea";
+
     std::string name;
     std::cout << "What is the name of the input file? (.csv will be automaticaly appended) (NAME_INPUT)" << std::endl;
     std::getline(std::cin, name);
-    if (name.empty())
+    if (name.empty()) // nothing entered, use default
     {
-        return "inputForCardea.csv";
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        return default_name + ".csv"; // automatically append .csv extension to name
     }
     else
     {
@@ -1122,12 +1115,15 @@ std::string init_NAME_INPUT()
 
 std::string init_NAME_OUTPUT()
 {
+    const std::string default_name = "outputForCardea";
+
     std::string name;
     std::cout << "How should the output file be named? (.csv will be automaticaly appended) (NAME_OUTPUT)" << std::endl;
     std::getline(std::cin, name);
-    if (name.empty())
+    if (name.empty()) // nothing entered, use default
     {
-        return "outputForCardea.csv";
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        return default_name + ".csv"; // automatically append .csv extension to name
     }
     else
     {
@@ -1137,12 +1133,15 @@ std::string init_NAME_OUTPUT()
 
 std::string init_NAME_EVENT()
 {
+    const std::string default_name = "screeningName";
+    
     std::string name;
     std::cout << "What is the screening name according to the consent form file name? (NAME_EVENT)" << std::endl;
     std::getline(std::cin, name);
-    if (name.empty())
+    if (name.empty()) // nothing entered, use default
     {
-        return "screeningName";
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        return default_name;
     }
     else
     {
@@ -1152,27 +1151,43 @@ std::string init_NAME_EVENT()
 
 std::string init_NAME_FORM_PATH()
 {
-    std::string name;
+    const std::string default_name = "C:\\Users\\Bryan\\SHF\\Heart_Screenings\\Forms"; // escaped characters; C:\Users\Bryan\SHF\"Heart Screenings"\Forms
+    
     std::cout << "What is the path to the consent forms? (NAME_FORM_PATH)" << std::endl;
-    std::getline(std::cin, name);
-    if (name.empty())
+    while (true) // keep prompting for path name until a valid path is given
     {
-        return "C:\\Users"; // escaped backslash character which is why there are two
-    }
-    else
-    {
-        return name;
+        std::string name;
+        std::getline(std::cin, name);
+        if (name.empty()) // nothing entered, use default
+        {
+            std::cout << "Nothing was entered. Default path will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+            return default_name;
+        }
+        else
+        {
+            if (std::filesystem::exists(name)) // path is valid
+            {
+                return name;
+            }
+            else // path is not valid
+            {
+                std::cout << "Path name is invalid. Check for typos or if path exists. Slash direction does not matter." << std::endl;
+            }
+        }
     }
 }
 
 std::string init_FORM_YES()
 {
+    const std::string default_yes = "Yes";
+
     std::string yes;
     std::cout << "What should be put in the Consent column if the consent form exists? (FORM_YES)" << std::endl;
     std::getline(std::cin, yes);
-    if (yes.empty())
+    if (yes.empty()) // nothing entered, use default
     {
-        return "Yes";
+        std::cout << "Nothing was entered. Default entry will be used (ignore quotes): \"" << default_yes << "\"\n" << std::endl;
+        return default_yes;
     }
     else
     {
@@ -1182,12 +1197,15 @@ std::string init_FORM_YES()
 
 std::string init_FORM_NO()
 {
+    const std::string default_no = "";
+    
     std::string no;
     std::cout << "What should be put in the Consent column if the consent form does not exist? (FORM_NO)" << std::endl;
     std::getline(std::cin, no);
-    if (no.empty())
+    if (no.empty()) // nothing entered, use default
     {
-        return "";
+        std::cout << "Nothing was entered. Default entry will be used (ignore quotes): \"" << default_no << "\"\n" << std::endl;
+        return default_no;
     }
     else
     {
@@ -1197,12 +1215,15 @@ std::string init_FORM_NO()
 
 std::string init_NAME_LOG()
 {
+    const std::string default_name = "log_" + NAME_EVENT + ".txt";
+    
     std::string name;
     std::cout << "[ ADVANCED ] How should the log file detailing program events be named? (NAME_LOG)" << std::endl;
     std::getline(std::cin, name);
-    if (name.empty())
+    if (name.empty()) // nothing entered, use default
     {
-        return "log_" + NAME_EVENT + ".txt";
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        return default_name;
     }
     else
     {
@@ -1212,12 +1233,15 @@ std::string init_NAME_LOG()
 
 std::string init_NAME_INPUT_CLEAN()
 {
+    const std::string default_name = "sanitized.csv";
+
     std::string name;
     std::cout << "[ ADVANCED ] How should the sanitized input be named? (NAME_INPUT_CLEAN)" << std::endl;
     std::getline(std::cin, name);
-    if (name.empty())
+    if (name.empty()) // nothing entered, use default
     {
-        return "sanitized.csv";
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        return default_name;
     }
     else
     {
@@ -1227,12 +1251,15 @@ std::string init_NAME_INPUT_CLEAN()
 
 std::string init_NAME_OUTPUT_DUPLICATES()
 {
+    const std::string default_name = "duplicates.csv";
+    
     std::string name;
     std::cout << "[ ADVANCED ] How should the output still containing duplicates be named? (NAME_OUTPUT_DUPLICATES)" << std::endl;
     std::getline(std::cin, name);
-    if (name.empty())
+    if (name.empty()) // nothing entered, use default
     {
-        return "duplicates.csv";
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        return default_name;
     }
     else
     {
@@ -1242,12 +1269,15 @@ std::string init_NAME_OUTPUT_DUPLICATES()
 
 std::string init_NAME_ENGLISH()
 {
+    const std::string default_name = "English";
+    
     std::string name;
     std::cout << "[ ADVANCED ] How is it indicated in the raw input csv that the forms were filled out in English? (NAME_ENGLISH)" << std::endl;
     std::getline(std::cin, name);
-    if (name.empty())
+    if (name.empty()) // nothing entered, use default
     {
-        return "English";
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        return default_name;
     }
     else
     {
@@ -1257,12 +1287,15 @@ std::string init_NAME_ENGLISH()
 
 char init_DELIMITER_CLEAN()
 {
+    const char default_delimiter = '$';
+    
     std::string delimiter;
     std::cout << "[ ADVANCED ] What single character should be the clean delimiter for the sanitized input csv? (DELIMITER_CLEAN)" << std::endl;
     std::getline(std::cin, delimiter);
-    if (delimiter.empty())
+    if (delimiter.empty()) // nothing entered, use default
     {
-        return '$';
+        std::cout << "Nothing was entered. Default delimiter will be used (ignore quotes): '" << default_delimiter << "'\n" << std::endl;
+        return default_delimiter;
     }
     else
     {
@@ -1272,12 +1305,15 @@ char init_DELIMITER_CLEAN()
 
 char init_DELIMITER_CSV()
 {
+    const char default_delimiter = ',';
+    
     std::string delimiter;
     std::cout << "[ ADVANCED ] What is the delimiter of the raw input csv? (DELIMITER_CSV)" << std::endl;
     std::getline(std::cin, delimiter);
-    if (delimiter.empty())
+    if (delimiter.empty()) // nothing entered, use default
     {
-        return ',';
+        std::cout << "Nothing was entered. Default delimiter will be used (ignore quotes): '" << default_delimiter << "'\n" << std::endl;
+        return default_delimiter;
     }
     else
     {
