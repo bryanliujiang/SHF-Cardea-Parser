@@ -133,7 +133,7 @@ void Parse()
     {
         std::cout << add_log("[ ERROR ] '" + NAME_INPUT + "' could not be opened or "
             + "does not exist.")
-            << "\nMake sure the input .csv is in the same folder as this program.\n" << std::endl;
+            << "\nMake sure the input .csv is in the same folder as this program." << std::endl;
         return; // terminate program early due to error
     }
 
@@ -1104,7 +1104,7 @@ std::string init_NAME_INPUT()
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"" << std::endl;
         return default_name + ".csv"; // automatically append .csv extension to name
     }
     else
@@ -1122,7 +1122,7 @@ std::string init_NAME_OUTPUT()
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"" << std::endl;
         return default_name + ".csv"; // automatically append .csv extension to name
     }
     else
@@ -1140,7 +1140,7 @@ std::string init_NAME_EVENT()
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"" << std::endl;
         return default_name;
     }
     else
@@ -1151,7 +1151,7 @@ std::string init_NAME_EVENT()
 
 std::string init_NAME_FORM_PATH()
 {
-    const std::string default_name = "C:\\Users\\Bryan\\SHF\\Heart_Screenings\\Forms"; // escaped characters; C:\Users\Bryan\SHF\"Heart Screenings"\Forms
+    const std::string default_name = "C:\\Users\\Bryan\\SHF\\Heart Screenings\\Forms"; // escaped characters; C:\Users\Bryan\SHF\"Heart Screenings"\Forms
     
     std::cout << "What is the path to the consent forms? (NAME_FORM_PATH)" << std::endl;
     while (true) // keep prompting for path name until a valid path is given
@@ -1160,7 +1160,7 @@ std::string init_NAME_FORM_PATH()
         std::getline(std::cin, name);
         if (name.empty()) // nothing entered, use default
         {
-            std::cout << "Nothing was entered. Default path will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+            std::cout << "Nothing was entered. Default path will be used (ignore quotes): \"" << default_name << "\"" << std::endl;
             return default_name;
         }
         else
@@ -1186,7 +1186,7 @@ std::string init_FORM_YES()
     std::getline(std::cin, yes);
     if (yes.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default entry will be used (ignore quotes): \"" << default_yes << "\"\n" << std::endl;
+        std::cout << "Nothing was entered. Default entry will be used (ignore quotes): \"" << default_yes << "\"" << std::endl;
         return default_yes;
     }
     else
@@ -1204,7 +1204,7 @@ std::string init_FORM_NO()
     std::getline(std::cin, no);
     if (no.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default entry will be used (ignore quotes): \"" << default_no << "\"\n" << std::endl;
+        std::cout << "Nothing was entered. Default entry will be used (ignore quotes): \"" << default_no << "\"" << std::endl;
         return default_no;
     }
     else
@@ -1222,7 +1222,7 @@ std::string init_NAME_LOG()
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"" << std::endl;
         return default_name;
     }
     else
@@ -1240,7 +1240,7 @@ std::string init_NAME_INPUT_CLEAN()
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"" << std::endl;
         return default_name;
     }
     else
@@ -1258,7 +1258,7 @@ std::string init_NAME_OUTPUT_DUPLICATES()
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"" << std::endl;
         return default_name;
     }
     else
@@ -1276,7 +1276,7 @@ std::string init_NAME_ENGLISH()
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"\n" << std::endl;
+        std::cout << "Nothing was entered. Default name will be used (ignore quotes): \"" << default_name << "\"" << std::endl;
         return default_name;
     }
     else
@@ -1294,7 +1294,7 @@ char init_DELIMITER_CLEAN()
     std::getline(std::cin, delimiter);
     if (delimiter.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default delimiter will be used (ignore quotes): '" << default_delimiter << "'\n" << std::endl;
+        std::cout << "Nothing was entered. Default delimiter will be used (ignore quotes): '" << default_delimiter << "'" << std::endl;
         return default_delimiter;
     }
     else
@@ -1312,7 +1312,7 @@ char init_DELIMITER_CSV()
     std::getline(std::cin, delimiter);
     if (delimiter.empty()) // nothing entered, use default
     {
-        std::cout << "Nothing was entered. Default delimiter will be used (ignore quotes): '" << default_delimiter << "'\n" << std::endl;
+        std::cout << "Nothing was entered. Default delimiter will be used (ignore quotes): '" << default_delimiter << "'" << std::endl;
         return default_delimiter;
     }
     else
