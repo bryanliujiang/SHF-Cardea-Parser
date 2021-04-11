@@ -18,7 +18,7 @@ This manual was written to be read and understood by anybody regardless of
 their background in programming. However, technical terms may be present at 
 times for sake of completeness/conciseness. These can simply be ignored if they 
 are not applicable to one's use case. One should not have to be familiar 
-with any technical terms to still understand the program or troubleshoot a 
+with any technical terms to still understand this program or troubleshoot a 
 problem.
 
 This program consists of three main stages:
@@ -55,9 +55,9 @@ entries and as delimiters.
 
 Cardea requires a very specific layout of the file it accepts. While patient 
 information is processed in a separate SHF server which then generates a CSV 
-file storing information that Cardea needs, it does not produce a Cardea-
-compatible file. This is the motive for the conversion stage (and this program 
-itself).
+file storing information that Cardea needs, it does not produce a 
+Cardea-compatible file. This is the motive for the conversion stage (and 
+this program itself).
 
 In this stage, the actual conversion of the raw input CSV file to a Cardea-
 compatible output file takes place. Instead of starting from the input file 
@@ -65,12 +65,12 @@ and taking away/modifying its entries, this program actually builds the
 output file from scratch, while importing any appropriate entries from the 
 input as necessary. Other pertinent processing is also carried out during this 
 stage, such as determining if a patient's consent form is on file or handling 
-forms filled out in different languages, as some examples. Additionally, 
-problematic entries are corrected or pointed out by this program, such as 
-removing extraneous spaces from entries (Cardea does not handle extra spaces 
-well) and warning when fields were left empty. Once the document is parsed, 
-it must now be handled differently from the raw input CSV file, as the new 
-layout would be drastically altered from the original.
+forms filled out in different languages. Additionally, problematic entries 
+are corrected or pointed out by this program, such as removing extraneous 
+spaces from entries (Cardea does not handle extra spaces well) and warning 
+when fields were left empty. Once the document is parsed, it must now be 
+handled differently from the raw input CSV file, as the new layout would be 
+drastically altered from the original.
 
 ### **Duplicate Action Stage**
 
@@ -85,11 +85,11 @@ duplicate action stage.
 In this stage, this program detects and takes action against duplicates, 
 based on a pre-determined configuration of what qualifies as a duplicate. 
 There are two levels of strictness; if the stricter criteria are met, the 
-duplicate is automatically removed by the program, while only a warning is 
+duplicate is automatically removed by this program, while only a warning is 
 given if the less strict criteria are met. This program is also configured 
 to detect and warn if patient first and last names are swapped, which might 
 indicate a possible duplicate. Defining these criteria cannot be done through 
-the program interface but must require editing the source code itself, which 
+this program interface but must require editing the source code itself, which 
 is explained later in the manual (see Functions and Assets; 
 `track_duplicates_including_this()`). Once duplicates in the document are 
 handled, a finalized output file is produced and ready to be accepted by 
@@ -116,7 +116,7 @@ default values, and their C++ data types, separated by colons. Ignore the
 quotation marks. Each parameter will be described in detail afterward.
 
 \* Parameters marked with the asterisk can only be initialized in the custom 
-version of the program (see Advanced Setup section).
+version of this program (see Advanced Setup section).
 
 <br>
 
@@ -168,7 +168,7 @@ The name of the raw input CSV file to convert into a Cardea-compatible format.
 
 **Notes:**
 
-The program will automatically append the ".csv" extension to the name.
+this program will automatically append the ".csv" extension to the name.
 
 <br>
 
@@ -187,7 +187,7 @@ The desired name for the final Cardea-compatible output file.
 
 **Notes:**
 
-The program will automatically append the ".csv" extension to the name.
+this program will automatically append the ".csv" extension to the name.
 
 <br>
 
@@ -398,7 +398,7 @@ The single character to designate as the sanitized delimiter.
 **Notes:**
 
 This should be the singular character to forbid from being entered when 
-patients submit forms as it is heavily relied upon in this program for 
+patients submit forms, as it is heavily relied upon in this program for 
 sanitation and duplicate tracking. Incorrect initialization of this parameter 
 may result in a significantly disfigured output file that would be 
 incompatible with Cardea, if not crash this program. 
@@ -438,7 +438,7 @@ never needs to be changed from the default.
 
 
 
-
+<!--
 
 /* Cannot initialize the following parameters since source code might have to be adjusted */
 
@@ -446,6 +446,7 @@ const std::string NAME_FORM = "SHF-Consent_ _ _ _ -SIGNED.pdf"; // consent form 
 const int NUM_LANG_FIELDS = 10; // number of columns unique to a language
 const std::vector<std::string> HEADERS = // names and order of headers for output csv
 {
+ -->
 
 ---
 
@@ -487,8 +488,8 @@ patients during screenings.
 ## **Other Resources**
 <!--
 ```
-/* Parser functions used in the program */
-void Parse(); // runs the program workflow: Sanitize() -> MakeCardeaCompatible() -> RemoveDuplicatesFrom()
+/* Parser functions used in this program */
+void Parse(); // runs this program workflow: Sanitize() -> MakeCardeaCompatible() -> RemoveDuplicatesFrom()
 void Sanitize(std::ifstream& input); // sanitizes input and produces sanitized output file for processing
 void MakeCardeaCompatible(std::ifstream& input); // parses sanitized input according to Cardea, produces proper output for Cardea
 void RemoveDuplicatesFrom(std::ifstream& input); // produces output for Cardea without duplicates and/or with warnings of them
