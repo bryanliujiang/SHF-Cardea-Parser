@@ -2,31 +2,102 @@
 
 ---
 
-### **Table of Contents**
+## **Table of Contents**
 1) Overview
 1) Directions
 1) Parameters
-1) Functions
+1) Functions and Assets
 1) Advanced Setup
+1) Troubleshooting
 1) Other Resources
 
 ---
 
-### **Overview**
+## **Overview**
 This manual was written to be read and understood by anybody regardless of 
 their background in programming. However, technical terms may be present at 
 times for sake of completeness/conciseness. These can simply be ignored if they 
-are not applicable to one's use case. Again, one should not have to be familiar 
+are not applicable to one's use case. One should not have to be familiar 
 with any technical terms to still understand the program or troubleshoot a 
 problem.
-<!--
-Sanitation step
-Cardea-compatible conversion step
-Duplicate action step
--->
+
+This program consists of three main stages:
+
+1) Sanitation stage
+2) Cardea-compatible conversion stage
+3) Duplicate action stage
+
+### **Sanitation Stage**
+
+CSV stands for comma-separated values. As the name implies, individual entries 
+from spreadsheets, like the raw input CSV file for this program, are commonly 
+separated by commas when the file is in the CSV format. This separator 
+character (the comma in this case) is known as a "delimiter." 
+
+While there is nothing inherently wrong with commas as delimiters, it does 
+become problematic when one wishes to parse through a comma-delimited 
+document. The reason is that it is not uncommon that the entries delimited by 
+commas contain these very commas themselves. This complicates the parsing 
+process, as one must then keep track of which commas are true delimiters 
+and which are just part of the entries. This is the motive for the 
+sanitation stage.
+
+In this stage, this program "sanitizes" the raw input CSV file by scanning 
+the whole document for the comma delimiter (can be other characters also, see 
+Advanced Setup), ignoring commas deemed to be from entries and replacing 
+commas deemed to be delimiters with an alternative character, a "clean" 
+delimiter that can be user specified ('$' character by default) and is not 
+expected to appear within any entry. Once the document is sanitized, it can be 
+manipulated freely without worry of confusion between characters within 
+entries and as delimiters.
+
+### **Cardea-Compatible Conversion Stage**
+
+Cardea requires a very specific layout of the file it accepts. While patient 
+information is processed in a separate SHF server which then generates a CSV 
+file storing information that Cardea needs, it does not produce a Cardea-
+compatible file. This is the motive for the conversion stage (and this program 
+itself).
+
+In this stage, the actual conversion of the raw input CSV file to a Cardea-
+compatible output file takes place. Instead of starting from the input file 
+and taking away/modifying its entries, this program actually builds the 
+output file from scratch, while importing any appropriate entries from the 
+input as necessary. Other pertinent processing is also carried out during this 
+stage, such as determining if a patient's consent form is on file or handling 
+forms filled out in different languages, as some examples. Additionally, 
+problematic entries are corrected or pointed out by this program, such as 
+removing extraneous spaces from entries (Cardea does not handle extra spaces 
+well) and warning when fields were left empty. Once the document is parsed, 
+it must now be handled differently from the raw input CSV file, as the new 
+layout would be drastically altered from the original.
+
+### **Duplicate Action Stage**
+
+After the conversion stage, the file can now technically be read by Cardea. 
+However, it is possible that patients submit their information multiple times 
+for the same screening (such as to update older information or due to network 
+error), resulting in duplicated patient information that can lead to confusion 
+in properly identifying patients during screenings. Unfortunately, the SHF 
+server does not check for duplicate submissions. This is the motive for the 
+duplicate action stage.
+
+In this stage, this program detects and takes action against duplicates, 
+based on a pre-determined configuration of what qualifies as a duplicate. 
+There are two levels of strictness; if the stricter criteria are met, the 
+duplicate is automatically removed by the program, while only a warning is 
+given if the less strict criteria are met. This program is also configured 
+to detect and warn if patient first and last names are swapped, which might 
+indicate a possible duplicate. Defining these criteria cannot be done through 
+the program interface but must require editing the source code itself, which 
+is explained later in the manual (see Functions and Assets; 
+`track_duplicates_including_this()`). Once duplicates in the document are 
+handled, a finalized output file is produced and ready to be accepted by 
+Cardea.
+
 ---
 
-### **Directions**
+## **Directions**
 1) Place the raw input CSV file in the same location as the parser program.
 1) Launch the program and follow the prompts.
 1) Before console closes, an event log should be printed as well as a prompt 
@@ -39,7 +110,7 @@ Duplicate action step
 
 ---
 
-### **Parameters**
+## **Parameters**
 Immediately below is a list of all the user-adjustable parameters, their 
 default values, and their C++ data types, separated by colons. Ignore the 
 quotation marks. Each parameter will be described in detail afterward.
@@ -252,7 +323,7 @@ its name.
 **Description:** 
 
 The name for the intermediate file produced by this program following the 
-sanitation step.
+sanitation stage.
 
 **Notes:**
 
@@ -275,7 +346,7 @@ this program.
 **Description:** 
 
 The name for the intermediate file produced by this program following the 
-Cardea-compatible conversion step.
+Cardea-compatible conversion stage.
 
 **Notes:**
 
@@ -378,19 +449,42 @@ const std::vector<std::string> HEADERS = // names and order of headers for outpu
 
 ---
 
-### **Functions**
+## **Functions and Assets**
+
+
 
 <!--
 CSV stands for comma-separated values. 
+
+Unfortunately, the SHF server cannot completely 
+catch and correct all the issues from the patient information it receives. 
+
+or if a 
+phone number is valid
+
+However, the quality of the content in the output file is only as good as that 
+of the input file.
+
+Sometimes fields are left empty, sometimes an entry was 
+formatted incorrectly (leaving extra spaces, for example, which Cardea does 
+not handle well), and other times patients submit multiple times, leading to 
+duplicate patient information that can lead to confusion in identifying 
+patients during screenings.
 -->
 
 ---
 
-### **Advanced Setup**
+## **Advanced Setup**
+
+
 
 ---
 
-### **Other Resources**
+## **Troubleshooting**
+
+---
+
+## **Other Resources**
 <!--
 ```
 /* Parser functions used in the program */
