@@ -59,9 +59,9 @@ file storing information that Cardea needs, it does not produce a
 Cardea-compatible file. This is the motive for the conversion stage (and 
 this program itself).
 
-In this stage, the actual conversion of the raw input CSV file to a Cardea-
-compatible output file takes place. Instead of starting from the input file 
-and taking away/modifying its entries, this program actually builds the 
+In this stage, the actual conversion of the raw input CSV file to a 
+Cardea-compatible output file takes place. Instead of starting from the input 
+file and taking away/modifying its entries, this program actually builds the 
 output file from scratch, while importing any appropriate entries from the 
 input as necessary. Other pertinent processing is also carried out during this 
 stage, such as determining if a patient's consent form is on file or handling 
@@ -89,7 +89,7 @@ duplicate is automatically removed by this program, while only a warning is
 given if the less strict criteria are met. This program is also configured 
 to detect and warn if patient first and last names are swapped, which might 
 indicate a possible duplicate. Defining these criteria cannot be done through 
-this program interface but must require editing the source code itself, which 
+the program interface but must require editing the source code itself, which 
 is explained later in the manual (see Functions and Assets; 
 `track_duplicates_including_this()`). Once duplicates in the document are 
 handled, a finalized output file is produced and ready to be accepted by 
@@ -168,7 +168,7 @@ The name of the raw input CSV file to convert into a Cardea-compatible format.
 
 **Notes:**
 
-this program will automatically append the ".csv" extension to the name.
+This program will automatically append the ".csv" extension to the name.
 
 <br>
 
@@ -187,7 +187,7 @@ The desired name for the final Cardea-compatible output file.
 
 **Notes:**
 
-this program will automatically append the ".csv" extension to the name.
+This program will automatically append the ".csv" extension to the name.
 
 <br>
 
