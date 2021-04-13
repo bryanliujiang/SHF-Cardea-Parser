@@ -4,11 +4,17 @@
 
 ## **Table of Contents**
 1) Overview
+
 1) Directions
+
 1) Parameters
+
 1) Functions and Assets
+
 1) Advanced Setup
+
 1) Troubleshooting
+
 1) Other Resources
 
 ---
@@ -24,7 +30,9 @@ problem.
 This program consists of three main stages:
 
 1) Sanitation stage
+
 2) Cardea-compatible conversion stage
+
 3) Duplicate action stage
 
 ### **Sanitation Stage**
@@ -99,14 +107,17 @@ Cardea.
 
 ## **Directions**
 1) Place the raw input CSV file in the same location as the parser program.
+
 1) Launch the program and follow the prompts.
+
 1) Before console closes, an event log should be printed as well as a prompt 
    to exit the program.
+   
 1) The Cardea-compatible output should be in the same location as 
    the program along with the log file
 
-	 **NOTE:** If you run the program with the same event name, the event logs
-             will be appended to (not write over) the existing log file.
+    **NOTE:** If you run the program with the same event name, the event logs
+              will be appended to (not write over) the existing log file.
 
 ---
 
@@ -430,8 +441,6 @@ it is possible that the raw input CSV file may use a different delimiter,
 warranting this parameter to be modified. In the meantime, however, it likely 
 never needs to be changed from the default.
 
-<br>
-
 <!--
 
 /* Cannot initialize the following parameters since source code might have to be adjusted */
@@ -509,13 +518,58 @@ patients during screenings.
 
 ## **Advanced Setup**
 
+Below are some alternative ways to run this program.
 
+<br>
+
+### **Accelerated Parameter Initialization**
+
+While one can manually initialize each parameter line by line, this process 
+can be accelerated by pre-initializing each expected parameter in a 
+separate text document and then copy and pasting that into this program.
+
+1) Create an empty text document. 
+
+    This can be done by opening any desired location in File Explorer, 
+    right-clicking in any empty area of that location, and selecting "New" 
+    and then the "Text Document" option. Give the text document any name, 
+    such as "parameters.txt" (".txt" might already be appended).
+
+1) Enter into the document line by line the initialization of each parameter 
+in the order as if running this program itself. 
+
+    Press ENTER only once after each line, including after the final line. If 
+    one wishes to use the default value of a parameter (see Parameters), 
+    simply leave that line empty.
+
+1) If one would like to have this program exit immediately upon completion and 
+skip seeing the event logs printed to the console altogether, add one 
+additional empty line to the end of the document (simulates pressing ENTER 
+to exit the program). The event logs will still append to the log file.
+
+1) Select all the contents of the document (Ctrl+A), copy its contents 
+(Ctrl+C), run this program, and then simply paste the contents (Ctrl+V).
+
+This program will interpret the end of each line as if ENTER were pressed and 
+will initialize each parameter with the contents of each line in the same 
+order.
+
+One advantage to this approach is that it allows for fast runs and reruns of 
+this program. This is especially true if this program has to be run or rerun 
+at a later time when one may not immediately recall how to initialize the 
+parameters. 
+
+<br>
+
+### **View Intermediate Files**
+
+text
 
 ---
 
 ## **Troubleshooting**
 
-All these suggestions are assuming this program was compiled or run on a 
+All these suggestions below are assuming this program was compiled or run on a 
 computer using Windows 10.
 
 <br>
@@ -624,12 +678,12 @@ named "Location:" followed by the path to copy and paste. If the path is long,
 make sure to copy and paste the whole path, as some parts may be cut off from 
 view.
 
-<br>
-
 ---
 
 ## **Other Resources**
 
 Be sure to have the updated contact information of the SHF tech administrator!
+
+One may also contact Bryan Jiang by email at bryanjiang@ucla.edu.
 
 ---
