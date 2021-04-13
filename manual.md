@@ -153,7 +153,7 @@ One should be more wary about initializing the following parameters:
 
 <br>
 
-#### **NAME_INPUT**
+### **NAME_INPUT**
 **Default:** 
 
 "inputForCardea"
@@ -172,7 +172,7 @@ This program will automatically append the ".csv" extension to the name.
 
 <br>
 
-#### **NAME_OUTPUT**
+### **NAME_OUTPUT**
 **Default:** 
 
 "outputForCardea"
@@ -191,7 +191,7 @@ This program will automatically append the ".csv" extension to the name.
 
 <br>
 
-#### **NAME_EVENT**
+### **NAME_EVENT**
 **Default:** 
 
 "screeningName"
@@ -213,7 +213,7 @@ event name.
 
 <br>
 
-#### **NAME_FORM_PATH**
+### **NAME_FORM_PATH**
 **Default:** 
 
 "C:\\Users\\Bryan\\SHF\\Heart Screenings\\Forms"
@@ -234,7 +234,7 @@ until a valid path is given.
 
 <br>
 
-#### **FORM_YES**\*
+### **FORM_YES**\*
 **Default:** 
 
 "Yes"
@@ -257,7 +257,7 @@ changed from the default.
 
 <br>
 
-#### **FORM_NO**\*
+### **FORM_NO**\*
 **Default:** 
 
 ""
@@ -280,7 +280,7 @@ changed from the default (which is empty).
 
 <br>
 
-#### **NAME_LOG**\*
+### **NAME_LOG**\*
 **Default:** 
 
 "log_” + **NAME_EVENT** + “.txt"
@@ -311,7 +311,7 @@ its name.
 
 <br>
 
-#### **NAME_INPUT_CLEAN**\*
+### **NAME_INPUT_CLEAN**\*
 **Default:** 
 
 "sanitized.csv"
@@ -334,7 +334,7 @@ this program.
 
 <br>
 
-#### **NAME_OUTPUT_DUPLICATES**\*
+### **NAME_OUTPUT_DUPLICATES**\*
 **Default:** 
 
 "duplicates.csv"
@@ -357,7 +357,7 @@ this program.
 
 <br>
 
-#### **NAME_ENGLISH**\*
+### **NAME_ENGLISH**\*
 **Default:** 
 
 "English"
@@ -382,7 +382,7 @@ changed from the default.
 
 <br>
 
-#### **DELIMITER_CLEAN**\*
+### **DELIMITER_CLEAN**\*
 **Default:** 
 
 '$'
@@ -409,7 +409,7 @@ to be changed from the default.
 
 <br>
 
-#### **DELIMITER_CSV**\*
+### **DELIMITER_CSV**\*
 **Default:** 
 
 ','
@@ -432,12 +432,6 @@ never needs to be changed from the default.
 
 <br>
 
-
-
-
-
-
-
 <!--
 
 /* Cannot initialize the following parameters since source code might have to be adjusted */
@@ -454,38 +448,6 @@ const std::vector<std::string> HEADERS = // names and order of headers for outpu
 
 
 
-<!--
-CSV stands for comma-separated values. 
-
-Unfortunately, the SHF server cannot completely 
-catch and correct all the issues from the patient information it receives. 
-
-or if a 
-phone number is valid
-
-However, the quality of the content in the output file is only as good as that 
-of the input file.
-
-Sometimes fields are left empty, sometimes an entry was 
-formatted incorrectly (leaving extra spaces, for example, which Cardea does 
-not handle well), and other times patients submit multiple times, leading to 
-duplicate patient information that can lead to confusion in identifying 
-patients during screenings.
--->
-
----
-
-## **Advanced Setup**
-
-
-
----
-
-## **Troubleshooting**
-
----
-
-## **Other Resources**
 <!--
 ```
 /* Parser functions used in this program */
@@ -523,3 +485,151 @@ std::vector<std::string> logs; // holds log entries
 
 ```
 -->
+
+<!--
+CSV stands for comma-separated values. 
+
+Unfortunately, the SHF server cannot completely 
+catch and correct all the issues from the patient information it receives. 
+
+or if a 
+phone number is valid
+
+However, the quality of the content in the output file is only as good as that 
+of the input file.
+
+Sometimes fields are left empty, sometimes an entry was 
+formatted incorrectly (leaving extra spaces, for example, which Cardea does 
+not handle well), and other times patients submit multiple times, leading to 
+duplicate patient information that can lead to confusion in identifying 
+patients during screenings.
+-->
+
+---
+
+## **Advanced Setup**
+
+
+
+---
+
+## **Troubleshooting**
+
+All these suggestions are assuming this program was compiled or run on a 
+computer using Windows 10.
+
+<br>
+
+### **[ ERROR ] ... could not be opened or does not exist.**
+
+First, be sure the input CSV is in the same folder as this program. If so, 
+make sure there are no typos when inputting the input CSV name (case matters). 
+Remember that ".csv" is automatically applied to the input name by this 
+program, so be sure that the input name does not redundantly include ".csv" 
+when inputting the input CSV name (input "inputForCardea" instead of 
+"inputForCardea.csv").
+
+If the error persists, this program might be placed in an access-restricted 
+location. Try moving this program to another location (such as Desktop). If 
+the error still persists, then the input CSV itself might have access 
+restrictions. Contact the administrator if this is the case. Another possible 
+reason is that this program itself might have been access-restricted upon 
+installation (possibly by antivirus software). Try granting exceptions to 
+this program.
+
+<br>
+
+### **[ ERROR ] Could not open sanitized input file.**
+
+Make sure no other file in the same folder as this program has the same name 
+as whatever the parameter **NAME_INPUT_CLEAN** was initialized to.
+
+Otherwise, this error occurred most likely due to the program being placed in 
+an access-restricted location. Try moving this program to another location 
+(such as Desktop). If the error persists, this program itself might have been 
+access-restricted upon installation (possibly by antivirus software). Try 
+granting exceptions to this program.
+
+<br>
+
+### **[ ERROR ] Could not open output with duplicates file.**
+
+Make sure no other file in the same folder as this program has the same name 
+as whatever the parameter **NAME_OUTPUT_DUPLICATES** was initialized to. Also, 
+be sure that the parameter **NAME_INPUT_CLEAN** was not initialized with the 
+same name as **NAME_OUTPUT_DUPLICATES**.
+
+<br>
+
+### **The final Cardea-compatible output file is not appearing.**
+
+If the log file exists, check the most recent log events for any errors 
+(most recent logs are appended to the bottom of the file). If no error is 
+present, check that the parameter **NAME_OUTPUT** is not initialized with 
+the same names as the parameters **NAME_INPUT_CLEAN** or 
+**NAME_OUTPUT_DUPLICATES**.
+
+If the log file does not exist, run this program line by line to check the 
+log events for any errors that are printed on the console before the program 
+exits. If no error is present, check that the parameter **NAME_OUTPUT** is not 
+initialized with the same names as the parameters **NAME_INPUT_CLEAN** or 
+**NAME_OUTPUT_DUPLICATES**. Also, be sure this is the case for parameter
+**NAME_LOG**.
+
+If none of these solutions work, contact the administrator.
+
+<br>
+
+### **Significant portions of the final output file are blank.**
+
+If the final output file is completely blank, be sure that the input CSV file 
+is also not empty or that parameter **NAME_INPUT** is initialized to the 
+correct file name. Also, be sure that parameter **NAME_OUTPUT** is not 
+initialized with the same name as **NAME_INPUT_CLEAN**.
+
+If the final output file is partially blank, check that parameter 
+**NAME_ENGLISH** is initialized properly and consistent with what the raw 
+input CSV file requires.
+
+<br>
+
+### **The final output file is disfigured.**
+
+Be sure that the parameters **DELIMITER_CLEAN** and **DELIMITER_CSV** are 
+initialized properly. This means making sure that the character for 
+**DELIMITER_CLEAN** was not used anywhere in the raw input CSV file (a 
+patient may have used and submitted it). If so, initialize **DELIMITER_CLEAN** 
+to an alternative character not present in the raw input CSV file. Otherwise, 
+check that the raw input CSV file is delimited by the character 
+set by **DELIMITER_CSV** and initialize accordingly. One way to check is 
+to open the raw input CSV file with a text editor like Notepad (can be done 
+by right-clicking on the file and selecting "Open with" or by temporarily 
+changing the file extension from ".csv" to ".txt" and opening that file again).
+
+If none of these solutions work, contact the administrator, as the SHF server 
+may have undergone a formatting change.
+
+<br>
+
+### **Path name is invalid.**
+
+If on Windows, be sure that any folders that have spaces in its name when 
+entered in the path are not surrounded by quotation marks.
+
+**TIP:** To be absolutely sure that the path entered is formatted correctly, 
+try copy and pasting the location listed in the folder properties. This can be 
+done by right-clicking on the folder containing the consent forms and 
+selecting the "Properties" option. Under the "General" tab should be a listing 
+named "Location:" followed by the path to copy and paste. If the path is long, 
+make sure to copy and paste the whole path, as some parts may be cut off from 
+view.
+
+<br>
+
+---
+
+## **Other Resources**
+
+Be sure to have the updated contact information of the SHF tech administrator!
+
+---
