@@ -725,6 +725,25 @@ by reference.
 
 TODO
 
+<!--
+CSV stands for comma-separated values. 
+
+Unfortunately, the SHF server cannot completely 
+catch and correct all the issues from the patient information it receives. 
+
+or if a 
+phone number is valid
+
+However, the quality of the content in the output file is only as good as that 
+of the input file.
+
+Sometimes fields are left empty, sometimes an entry was 
+formatted incorrectly (leaving extra spaces, for example, which Cardea does 
+not handle well), and other times patients submit multiple times, leading to 
+duplicate patient information that can lead to confusion in identifying 
+patients during screenings.
+-->
+
 \
 
 ### `RemoveDuplicatesFrom()`
@@ -746,9 +765,11 @@ still containing duplicates, passed by reference.
 
 **Notes:**
 
-TODO; to_remove overrides settings of to_warn; assumes to_warn columns 
-are subset of to_remove columns; delimiter-first indicates that row contained 
-a duplicate to remove by default
+TODO; 
+to_remove overrides settings of to_warn; 
+assumes to_warn columns are subset of to_remove columns; 
+delimiter-first indicates that row contained a duplicate to remove by default; 
+reference duplicate and reference swap definitions and row location storage
 
 \
 
@@ -1098,10 +1119,11 @@ behaves properly with the function `swapped()`.
 Holds unique string representations of rows that are to be checked against for 
 any duplicates to remove and/or to warn of.
 
-While this program iterates through each row of a file, it will check if 
-the current row matches any row already stored in this asset. If a match is 
-NOT found, the string representation of the current row will be added to 
-this asset.
+While this program first iterates through each row of the file, it will check 
+if the current row matches any row already stored in this asset. If a match is 
+NOT found, the current row is NOT a duplicate, and the string representation 
+of the current row is then added to this asset. This way, a match will be 
+found if a duplicate of the current row is encountered later on.
 
 **Data Type:**
 
@@ -1129,10 +1151,12 @@ This asset only appears in the first iteration of the parser function
 Holds unique string representations of rows that are to be checked against for 
 swapped entries.
 
-While this program iterates through each row of a file, it will check if 
-the current row matches any row already stored in this asset. If a match is 
-NOT found, the string representation of the current row will be added to 
-this asset.
+While this program first iterates through each row of the file, it will check 
+if the current row matches any row already stored in this asset. If a match is 
+NOT found, the current row is NOT a swap, and the swapped (using the function 
+`swapped()`) version of the string representation of the current row is then 
+added to this asset. This way, a match will be found if a swapped version of 
+the current row is encountered later on.
 
 **Data Type:**
 
@@ -1160,10 +1184,16 @@ This asset only appears in the first iteration of the parser function
 Holds all string representations of rows that are confirmed to be duplicates 
 to remove and/or to warn of.
 
-While this program iterates through each row of a file, it will check if 
-the current row matches any row already stored in this asset. If a match is 
-found, the string representation of the current row will be added to 
-this asset.
+While this program first iterates through each row of the file, it will check 
+if the current row matches any row already stored in 
+`rows_scanned_for_duplicates`. If a match is found, the current row is a 
+duplicate, and the string representation of the current row is then added to 
+this asset, even if there are already previous occurrences of the same row 
+string in this asset. This way, every duplicate is matched to a row string 
+from this asset.
+
+Note that this asset does not include matches for the reference duplicates 
+(see Functions and Assets; `RemoveDuplicatesFrom()`).
 
 **Data Type:**
 
@@ -1189,10 +1219,15 @@ function `RemoveDuplicatesFrom()`.
 Holds all string representations of rows that are confirmed to have swapped 
 entries.
 
-While this program iterates through each row of a file, it will check if 
-the current row matches any row already stored in this asset. If a match is 
-found, the string representation of the current row will be added to 
-this asset.
+While this program first iterates through each row of the file, it will check 
+if the current row matches any row already stored in `rows_scanned_for_swaps`. 
+If a match is found, the current row is a swap, and the string representation 
+of the current row is then added to this asset, even if there are already 
+previous occurrences of the same row string in this asset. This way, every 
+swap is matched to a row string from this asset.
+
+Note that this asset does not include matches for the reference swaps (see 
+Functions and Assets; `RemoveDuplicatesFrom()`).
 
 **Data Type:**
 
@@ -1215,11 +1250,17 @@ function `RemoveDuplicatesFrom()`.
 
 **Description:**
 
-Holds unique string representations of rows that are confirmed to be 
-duplicates to remove and/or to warn of along with the locations of each of 
-those rows.
+Holds unique string representations of rows that are confirmed to have 
+duplicates to remove and/or to warn of (these row strings match to the 
+reference duplicates: see Functions and Assets; `RemoveDuplicatesFrom()`) 
+along with the locations of each of those rows and their duplicates.
 
-TODO; last number is reference duplicate
+While this program first iterates through each row of the file, it will check 
+if the current row matches any row already stored in 
+`rows_scanned_for_duplicates`. If a match is found, the current row is a 
+duplicate, and the string representation of the current row is then added 
+to this asset, replacing any previous occurrences. Row locations are then 
+recorded when this program iterates through the second time.
 
 **Data Type:**
 
@@ -1234,6 +1275,11 @@ This asset is built during the first iteration of the parser function
 `RemoveDuplicatesFrom()`.
 
 This asset is never explicitly emptied.
+
+The row location of the reference duplicate, the row that the other rows are 
+compared to to determine if they are duplicates, is made to be the last 
+number stored in the C++ `std::vector<int>` data structure by the parser 
+function `RemoveDuplicatesFrom()`.
 
 \
 
@@ -1242,9 +1288,19 @@ This asset is never explicitly emptied.
 **Description:**
 
 Holds unique string representations of rows that are confirmed to have swapped 
-entries along with the locations of each of those rows.
+entries (these row strings match to the reference swaps: see Functions and 
+Assets; `RemoveDuplicatesFrom()`) along with the locations of each of those 
+rows and their swaps.
 
-TODO; first number is reference swap
+
+While this program first iterates through each row of the file, it will check 
+if the current row matches any row already stored in `rows_scanned_for_swaps`. 
+If a match is found, the current row is a swap, and the swapped (using the 
+function `swapped()`) version of the string representation of the current row 
+is then added to this asset, replacing any previous occurrences. This way, 
+the row locations in this asset are represented by their respective reference 
+swaps. Row locations are then recorded when this program iterates through the 
+second time.
 
 **Data Type:**
 
@@ -1259,6 +1315,11 @@ This asset is built during the first iteration of the parser function
 `RemoveDuplicatesFrom()`.
 
 This asset is never explicitly emptied.
+
+The row location of the reference swap, the row that the other rows are 
+compared to to determine if they are swaps, is made to be the first number 
+stored in the C++ `std::vector<int>` data structure by the parser function 
+`RemoveDuplicatesFrom()`.
 
 \
 
@@ -1308,25 +1369,6 @@ Holds record of log entries throughout this program added by the function
 
 This asset is built by the function `add_log()` and is accessed by the 
 function `CreateLogFile()`.
-
-<!--
-CSV stands for comma-separated values. 
-
-Unfortunately, the SHF server cannot completely 
-catch and correct all the issues from the patient information it receives. 
-
-or if a 
-phone number is valid
-
-However, the quality of the content in the output file is only as good as that 
-of the input file.
-
-Sometimes fields are left empty, sometimes an entry was 
-formatted incorrectly (leaving extra spaces, for example, which Cardea does 
-not handle well), and other times patients submit multiple times, leading to 
-duplicate patient information that can lead to confusion in identifying 
-patients during screenings.
--->
 
 ---
 
