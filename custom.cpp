@@ -124,7 +124,7 @@ int main()
 void Parse()
 {
    ///////////////////////////////////////////////////////////////////////////////////////////////
-   /////////////////////////////// PART 1: SANITIZE RAW INPUT CSV ////////////////////////////////
+   //////////////////////////////////// STAGE 1: SANITATION //////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////////////////////
 
    /* Ignore; checks if raw input csv can be opened */
@@ -143,7 +143,7 @@ void Parse()
     raw_input.close(); // finished with sanitizing raw input csv
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////// PART 2: PRODUCE CARDEA OUTPUT CSV //////////////////////////////
+    //////////////////////////// STAGE 2: CARDEA-COMPATIBLE CONVERSION ////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* Ignore; checks if sanitized input file can be opened */
@@ -161,7 +161,7 @@ void Parse()
     std::remove(NAME_INPUT_CLEAN.c_str()); // delete the sanitized input file
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////// PART 3: REMOVE DUPLICATE ENTRIES ///////////////////////////////
+    ///////////////////////////////// STAGE 3: DUPLICATE ACTION ///////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /* Ignore; checks if output still with duplicates file can be opened */
@@ -860,19 +860,21 @@ void RemoveDuplicatesFrom(std::ifstream& input)
                     std::replace(row.begin(), row.end(), DELIMITER_CLEAN, DELIMITER_CSV); // replace the clean delimiter with original delimiter for this row
                     output << row << '\n'; // add this row to the final output (this row is not a duplicate to remove)
 
-                    auto find_to_remove_last = list_of_duplicates_found.find(potential_duplicate_to_remove); // see if this row is the reference duplicate
-                    if (find_to_remove_last != list_of_duplicates_found.end()) // scan did not reach end (a match was found)
+                    auto find_reference_duplicate_of_remove = list_of_duplicates_found.find(potential_duplicate_to_remove); // see if this row is the reference duplicate
+                    if (find_reference_duplicate_of_remove != list_of_duplicates_found.end()) // scan did not reach end (a match was found)
                     {
-                        find_to_remove_last->second.push_back(row_number); // record row number; last number will always be reference duplicate (the latest row)
+                        /* Last number of row record will always be the reference duplicate */
+                        find_reference_duplicate_of_remove->second.push_back(row_number); // record row number of reference duplicate
                     }
 
                     auto find_to_warn = list_of_duplicates.find(potential_duplicate_to_warn); // scan string list of confirmed duplicates for row to warn of
                     if (find_to_warn == list_of_duplicates.end()) // scan reached end of string list (did not find a row to warn of)
                     {
-                        auto find_to_warn_last = list_of_duplicates_found.find(potential_duplicate_to_warn); // see if this row is the reference duplicate
-                        if (find_to_warn_last != list_of_duplicates_found.end()) // scan did not reach end (a match was found)
+                        auto find_reference_duplicate_of_warn = list_of_duplicates_found.find(potential_duplicate_to_warn); // see if this row is the reference duplicate
+                        if (find_reference_duplicate_of_warn != list_of_duplicates_found.end()) // scan did not reach end (a match was found)
                         {
-                            find_to_warn_last->second.push_back(row_number); // record row number; last number will always be reference duplicate (the latest row)
+                            /* Last number of row record will always be the reference duplicate */
+                            find_reference_duplicate_of_warn->second.push_back(row_number); // record row number of reference duplicate
                         }
                     }
                     else // scan did not reach end of string list (a row to warn of duplicate was found)
@@ -899,17 +901,18 @@ void RemoveDuplicatesFrom(std::ifstream& input)
                 }
 
                 /* Take action against swaps */
-                auto find_swapped_from = list_of_swaps_found.find(potential_swap); // see if this row is the original (reference swap)
-                if (find_swapped_from != list_of_swaps_found.end()) // scan did not reach end (a match was found)
+                auto find_reference_swap = list_of_swaps_found.find(potential_swap); // see if this row is the original (reference swap)
+                if (find_reference_swap != list_of_swaps_found.end()) // scan did not reach end (a match was found)
                 {
-                    std::vector<int>& record_of_row_numbers = find_swapped_from->second; // give a nice name to reference the record of row locations
-                    if (record_of_row_numbers.empty()) // no row locations recorded yet for this swap
+                    /* First number of row record will always be the reference swap */
+                    std::vector<int>& record_of_row_numbers = find_reference_swap->second; // give a nice name to reference the record of row locations
+                    if (record_of_row_numbers.empty()) // no row locations of swaps recorded yet for this reference swap
                     {
-                        record_of_row_numbers.push_back(row_number); // first number added will be the row number of the reference swap
+                        record_of_row_numbers.push_back(row_number); // first number added is the row number of the reference swap
                     }
-                    else
+                    else // there is already at least a record of the row number of an older reference swap
                     {
-                        record_of_row_numbers[0] = row_number; // ensure first number will always be the latest row number of the reference swap
+                        record_of_row_numbers[0] = row_number; // ensure first number will always be the reference swap; replace older reference swap location
                     }
                 }
                 auto find_swap = list_of_swaps.find(potential_swap); // scan string list of confirmed swaps for row string
@@ -938,17 +941,18 @@ void RemoveDuplicatesFrom(std::ifstream& input)
     /* Add events to the log */
     for (auto found : list_of_duplicates_found) // go through every unique duplicate found
     {
-        for (auto row_num : found.second) // access the records of row locations of the duplicates
+        for (auto row_num : found.second) // .second accesses the records of row locations of the duplicates
         {
-            if (row_num == found.second.back()) break; // done logging once row of reference duplicate is reached (the latest row)
+            /* .second.back() is last number (.back()) in row record (.second) */
+            if (row_num == found.second.back()) break; // skip logging last number since it is the row number of the reference duplicate
 
             /*  Recall that potential duplicates to remove are tagged by the delimiter in the front! See track_duplicates_including_this() */
-            if (found.first[0] == DELIMITER_CLEAN) // is a potential duplicate to remove
+            if (found.first[0] == DELIMITER_CLEAN) // .first[0] checks the first character of the row string; is a potential duplicate to remove if delimiter
             {
                 std::cout << add_log("[ DELETION ] Removed duplicate of Row " + std::to_string(found.second.back())
                     + " that was found earlier on Row " + std::to_string(row_num)) << std::endl;
             }
-            else // is a potential duplicate to warn of
+            else // is a potential duplicate to warn of since first character of row string was not delimiter
             {
                 std::cout << add_log("[ WARNING ] Potential duplicate of Row " + std::to_string(found.second.back())
                     + " was found earlier on Row " + std::to_string(row_num)) << std::endl;
@@ -957,8 +961,9 @@ void RemoveDuplicatesFrom(std::ifstream& input)
     }
     for (auto found : list_of_swaps_found) // go through every unique swap found
     {
-        for (auto row_num : found.second) // access the records of row locations of the swaps
+        for (auto row_num : found.second) // .second accesses the records of row locations of the swaps
         {
+            /* .second.front() is first number (.front()) in row record (.second) */
             if (row_num == found.second.front()) continue; // skip logging first number since it is the row number of the reference swap
 
             std::cout << add_log("[ WARNING ] Potential duplicate (swapped first/last names) between Row " + std::to_string(row_num)
@@ -1070,12 +1075,12 @@ void track_duplicates_including_this(std::string entry, bool to_warn, bool for_s
 
     if (to_warn)
     {
-        potential_duplicate_to_warn += entry + DELIMITER_CLEAN;
+        potential_duplicate_to_warn += entry + DELIMITER_CLEAN; // should have the entry come before the delimiter for duplicates to warn of
     }
 
     if (for_swap)
     {
-        potential_swap += entry + DELIMITER_CLEAN;
+        potential_swap += entry + DELIMITER_CLEAN; // should have the entry come before the delimiter for swapped() to behave properly
     }
 
     if (to_remove)
@@ -1086,22 +1091,22 @@ void track_duplicates_including_this(std::string entry, bool to_warn, bool for_s
 
 std::string swapped(std::string potential_duplicate)
 {
-    std::istringstream iss(potential_duplicate);
-    std::string cell;
-    std::getline(iss, cell, DELIMITER_CLEAN);
-    std::string first_cell = cell;
-    std::getline(iss, cell, DELIMITER_CLEAN);
-    std::string second_cell = cell;
-    std::getline(iss, cell);
-    std::string other_cells = cell;
+    std::istringstream iss(potential_duplicate); // assumes entry comes before the delimiter in potential_duplicate
+    std::string cell; // temporarily store entry
+    std::getline(iss, cell, DELIMITER_CLEAN); // scan through potential_duplicate, stopping at the first delimiter
+    std::string first_cell = cell; // store everything before the first delimiter as the first entry
+    std::getline(iss, cell, DELIMITER_CLEAN); // starting after the first delimiter, scan until second delimiter is reached
+    std::string second_cell = cell; // store everything between first and second delimiters as the second entry
+    std::getline(iss, cell); // scan through the rest of potential_duplicate just in case there were other entries
+    std::string other_cells = cell; // store everything else after the second delimiter
     
-    std::string original_copy = potential_swap;
-    potential_swap.erase();
-    track_duplicates_including_this(second_cell, false, true, false);
-    track_duplicates_including_this(first_cell, false, true, false);
-    std::string swapped_copy = potential_swap + other_cells;
-    potential_swap = original_copy;
-    return swapped_copy;
+    std::string original_copy = potential_swap; // back up the actual potential_swap; will manipulate it to construct swapped version
+    potential_swap.erase(); // since actual potential_swap is backed up, clear it up to store swapped version of row string
+    track_duplicates_including_this(second_cell, false, true, false); // store second entry now as the first entry
+    track_duplicates_including_this(first_cell, false, true, false); // store the first entry now as the second entry
+    std::string swapped_copy = potential_swap + other_cells; // add on the other entries (swapped() only swaps first two entries)
+    potential_swap = original_copy; // restore the actual potential_swap from backup
+    return swapped_copy; // this is the swapped version of the row string
 }
 
 /* Functions for CreateLogFile() */
