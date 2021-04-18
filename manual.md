@@ -1,12 +1,12 @@
 ---
 title: "SHF Cardea Parser Manual"
 output:
-  html_document: default
   pdf_document: 
     toc: yes
-    toc_depth: 1
     latex_engine: xelatex
     number_sections: yes
+    toc_depth: 3
+  html_document: default
 mainfont: Georgia
 ---
 
@@ -79,7 +79,7 @@ In this stage, this program "sanitizes" the raw input CSV file by scanning
 the whole document for the comma delimiter (can be other characters also, see 
 Advanced Setup), ignoring commas deemed to be from entries and replacing 
 commas deemed to be delimiters with an alternative character, a "clean" 
-delimiter that can be user-specified ('$' character by default, see 
+delimiter that can be user-specified ('$' character by default, see Program 
 Parameters; **DELIMITER_CLEAN**) and is not expected to appear within any 
 entry. Once the document is sanitized, it can be manipulated freely without 
 worry of confusion between characters within entries and as delimiters.
@@ -131,18 +131,18 @@ Cardea.
 ---
 
 # **Directions**
-1) Place the raw input CSV file in the same location as the parser program.
+1) Place the raw input CSV file in the same location as this program.
 
-1) Launch the program and follow the prompts.
+1) Launch this program and follow the prompts.
 
-1) Before console closes, an event log should be printed as well as a prompt 
-   to exit the program.
+1) Before the console closes, an event log should be listed, followed by a 
+prompt to exit this program.
    
-1) The Cardea-compatible output should be in the same location as 
-   the program along with the log file
+1) The Cardea-compatible output should be in the same location as this program 
+along with the log file.
 
-    **NOTE:** If one runs the program with the same event name, the event logs
-              will be appended to (not write over) the existing log file.
+    **NOTE:** If one runs this program with the same event name, the event 
+    logs will be appended to (not write over) the existing log file.
 
 ---
 
@@ -151,12 +151,10 @@ Immediately below is a list of all the user-adjustable parameters, their
 default values, and their C++ data types, separated by colons. Ignore the 
 quotation marks. Each parameter is described in detail afterward.
 
-*\* Parameters marked with the asterisk can only be initialized in the custom 
-version of this program (see Advanced Setup; Custom Initialization).*
-
 \
 
-**One can freely initialize any of the following parameters without worry:**
+**Express-Available Parameters:** one can freely initialize any of the 
+following parameters without worry.
 
 **NAME_INPUT** : "inputForCardea" : `const std::string`
 
@@ -167,25 +165,27 @@ version of this program (see Advanced Setup; Custom Initialization).*
 **NAME_FORM_PATH** : "C:\\Users\\Bryan\\SHF\\Heart Screenings\\Forms" : 
 `const std::string`
 
-\***FORM_YES** : "Yes" : `const std::string`
-
-\***FORM_NO** : "" : `const std::string`
-
 \
 
-**One should be more wary about initializing the following parameters:**
+**Custom-Only Parameters:** one should be more wary about initializing the 
+following parameters. These can only be initialized in the custom version of 
+this program (see Advanced Setup; Custom Initialization).
 
-\***NAME_LOG** : "log_" + **NAME_EVENT** + ".txt" : `const std::string`
+**FORM_YES** : "Yes" : `const std::string`
 
-\***NAME_INPUT_CLEAN** : "sanitized.csv" : `const std::string`
+**FORM_NO** : "" : `const std::string`
 
-\***NAME_OUTPUT_DUPLICATES** : "duplicates.csv" : `const std::string`
+**NAME_LOG** : "log_" + **NAME_EVENT** + ".txt" : `const std::string`
 
-\***NAME_ENGLISH** : "English" : `const std::string`
+**NAME_INPUT_CLEAN** : "sanitized.csv" : `const std::string`
 
-\***DELIMITER_CLEAN** : '$' : `const char`
+**NAME_OUTPUT_DUPLICATES** : "duplicates.csv" : `const std::string`
 
-\***DELIMITER_CSV** : ',' : `const char`
+**NAME_ENGLISH** : "English" : `const std::string`
+
+**DELIMITER_CLEAN** : '$' : `const char`
+
+**DELIMITER_CSV** : ',' : `const char`
 
 \
 
@@ -196,6 +196,9 @@ possibly other dependent functions.
 
 \
 
+**Fixed Parameters:** one cannot modify these parameters without altering the 
+source code itself.
+
 **NAME_FORM**
 
 **NUM_LANG_FIELDS**
@@ -204,7 +207,10 @@ possibly other dependent functions.
 
 \
 
-## **NAME_INPUT**
+## **Express-Available Parameters**
+One can freely initialize any of the following parameters without worry.
+
+### **NAME_INPUT**
 **Description:** 
 
 The name of the raw input CSV file to convert into a Cardea-compatible format. 
@@ -223,7 +229,7 @@ This program automatically appends the ".csv" extension to the name.
 
 \
 
-## **NAME_OUTPUT**
+### **NAME_OUTPUT**
 **Description:** 
 
 The desired name for the final Cardea-compatible output file. 
@@ -242,7 +248,7 @@ This program automatically appends the ".csv" extension to the name.
 
 \
 
-## **NAME_EVENT**
+### **NAME_EVENT**
 **Description:** 
 
 The name of the current screening event based on the naming of the consent 
@@ -264,7 +270,7 @@ event name.
 
 \
 
-## **NAME_FORM_PATH**
+### **NAME_FORM_PATH**
 **Description:** 
 
 The absolute path to the directory/folder containing the patient consent forms. 
@@ -285,12 +291,17 @@ until a valid path is given.
 
 \
 
-## **FORM_YES**\*
+## **Custom-Only Parameters**
+One should be more wary about initializing the following parameters. These 
+can only be initialized in the custom version of this program (see Advanced 
+Setup; Custom Initialization).
+
+### **FORM_YES**
 **Description:** 
 
-The text to place into cells of the Consent column of the Cardea-compatible 
-output file when the consent form of a patient is found in the path 
-**NAME_FORM_PATH**.
+The text to be written into cells of the "Consent" column of the 
+Cardea-compatible output file when the consent form of a patient is 
+found in the path **NAME_FORM_PATH**.
 
 **Data Type:**
 
@@ -302,18 +313,21 @@ output file when the consent form of a patient is found in the path
 
 **Notes:**
 
+Keep in mind that the text used to initialize this parameter may be seen in 
+the final output file itself.
+
 This parameter was included for sake of user control if it ever need be 
 modified in the future. In the meantime, it likely never needs to be 
 changed from the default.
 
 \
 
-## **FORM_NO**\*
+### **FORM_NO**
 **Description:** 
 
-The text to place into cells of the Consent column of the Cardea-compatible 
-output file when the consent form of a patient is NOT found in the path 
-**NAME_FORM_PATH**.
+The text to be written into cells of the "Consent" column of the 
+Cardea-compatible output file when the consent form of a patient is NOT 
+found in the path **NAME_FORM_PATH**.
 
 **Data Type:**
 
@@ -325,13 +339,16 @@ output file when the consent form of a patient is NOT found in the path
 
 **Notes:**
 
+Keep in mind that the text used to initialize this parameter may be seen in 
+the final output file itself.
+
 This parameter was included for sake of user control if it ever need be 
 modified in the future. In the meantime, it likely never needs to be 
 changed from the default (which is empty).
 
 \
 
-## **NAME_LOG**\*
+### **NAME_LOG**
 **Description:** 
 
 The desired name for the log file detailing the events and set parameters 
@@ -362,7 +379,7 @@ its name.
 
 \
 
-## **NAME_INPUT_CLEAN**\*
+### **NAME_INPUT_CLEAN**
 **Description:** 
 
 The name for the intermediate file produced by this program following the 
@@ -385,7 +402,7 @@ this program.
 
 \
 
-## **NAME_OUTPUT_DUPLICATES**\*
+### **NAME_OUTPUT_DUPLICATES**
 **Description:** 
 
 The name for the intermediate file produced by this program following the 
@@ -408,7 +425,7 @@ this program.
 
 \
 
-## **NAME_ENGLISH**\*
+### **NAME_ENGLISH**
 **Description:** 
 
 The exact text from the the raw input CSV file indicating that a specific form 
@@ -433,7 +450,7 @@ changed from the default.
 
 \
 
-## **DELIMITER_CLEAN**\*
+### **DELIMITER_CLEAN**
 **Description:** 
 
 The single character to designate as the sanitized delimiter.
@@ -460,7 +477,7 @@ to be changed from the default.
 
 \
 
-## **DELIMITER_CSV**\*
+### **DELIMITER_CSV**
 **Description:** 
 
 The character used as the delimiter in the raw input CSV file.
@@ -483,7 +500,10 @@ never needs to be changed from the default.
 
 \
 
-## **NAME_FORM**
+## **Fixed Parameters**
+One cannot modify these parameters without altering the source code itself.
+
+### **NAME_FORM**
 **Description:** 
 
 The format of the consent form file name, adding a whitespace character where 
@@ -504,7 +524,7 @@ Functions and Assets; `consent_form_file_name()`).
 
 \
 
-## **NUM_LANG_FIELDS**
+### **NUM_LANG_FIELDS**
 **Description:** 
 
 The number of columns unique to a language.
@@ -524,10 +544,11 @@ this parameter (see Functions and Assets; `MakeCardeaCompatible()`).
 
 \
 
-## **HEADERS**
+### **HEADERS**
 **Description:** 
 
-The names and order of headers in the Cardea-compatible format.
+The names and order of headers in the Cardea-compatible format. Each header 
+represents the name of a column.
 
 **Data Type:**
 
@@ -572,7 +593,8 @@ on this parameter (see Functions and Assets; `MakeCardeaCompatible()`,
 
 # **Functions and Assets**
 
-TODO
+Below are all the functions and global variables associated with those 
+functions that this program uses.
 
 Notes in this section contain helpful information to keep in mind in the event 
 that any function or asset in the source code need be altered.
@@ -609,7 +631,7 @@ that any function or asset in the source code need be altered.
 
 \
 
-## Main Functions
+## **Main Functions**
 ### `Parse()`
 **Description:**
 
@@ -658,7 +680,7 @@ This function prints a message directly to the program interface.
 
 \
 
-## Functions for `Parse()`
+## **Functions for `Parse()`**
 ### `Sanitize()`
 **Description:**
 
@@ -730,7 +752,7 @@ a duplicate to remove by default
 
 \
 
-## Assets for `MakeCardeaCompatible()`
+## **Assets for `MakeCardeaCompatible()`**
 ### `remove_spaces_from_this()`
 **Description:**
 
@@ -859,7 +881,7 @@ std::string LN, std::string FN, std::string format);`
 `format`
 
 > The format for the consent form file name. This is set by the definition  
-of *NAME_FORM**.
+of **NAME_FORM**.
 
 **Notes:**
 
@@ -869,7 +891,7 @@ The whitespace character is used as substitute for the variables in
 
 \
 
-## Assets for `RemoveDuplicatesFrom()`
+## **Assets for `RemoveDuplicatesFrom()`**
 ### `track_duplicates_including_this()`
 **Description:**
 
@@ -1073,7 +1095,13 @@ behaves properly with the function `swapped()`.
 
 **Description:**
 
-holds strings to check against for duplicates to remove and/or warn of
+Holds unique string representations of rows that are to be checked against for 
+any duplicates to remove and/or to warn of.
+
+While this program iterates through each row of a file, it will check if 
+the current row matches any row already stored in this asset. If a match is 
+NOT found, the string representation of the current row will be added to 
+this asset.
 
 **Data Type:**
 
@@ -1081,7 +1109,16 @@ holds strings to check against for duplicates to remove and/or warn of
 
 **Notes:**
 
-TODO
+There are no string representations that are identical to each other 
+in this asset.
+
+This asset is built during the first iteration of the parser function 
+`RemoveDuplicatesFrom()`.
+
+This asset is never explicitly emptied.
+
+This asset only appears in the first iteration of the parser function 
+`RemoveDuplicatesFrom()`.
 
 \
 
@@ -1089,7 +1126,13 @@ TODO
 
 **Description:**
 
-holds strings to check against for swaps
+Holds unique string representations of rows that are to be checked against for 
+swapped entries.
+
+While this program iterates through each row of a file, it will check if 
+the current row matches any row already stored in this asset. If a match is 
+NOT found, the string representation of the current row will be added to 
+this asset.
 
 **Data Type:**
 
@@ -1097,7 +1140,16 @@ holds strings to check against for swaps
 
 **Notes:**
 
-TODO
+There are no string representations that are identical to each other 
+in this asset.
+
+This asset is built during the first iteration of the parser function 
+`RemoveDuplicatesFrom()`.
+
+This asset is never explicitly emptied.
+
+This asset only appears in the first iteration of the parser function 
+`RemoveDuplicatesFrom()`.
 
 \
 
@@ -1105,7 +1157,13 @@ TODO
 
 **Description:**
 
-holds strings of confirmed duplicates to remove and/or warn of
+Holds all string representations of rows that are confirmed to be duplicates 
+to remove and/or to warn of.
+
+While this program iterates through each row of a file, it will check if 
+the current row matches any row already stored in this asset. If a match is 
+found, the string representation of the current row will be added to 
+this asset.
 
 **Data Type:**
 
@@ -1113,7 +1171,14 @@ holds strings of confirmed duplicates to remove and/or warn of
 
 **Notes:**
 
-TODO
+There can be multiple string representations that are identical to each other 
+in this asset.
+
+This asset is built during the first iteration of the parser function 
+`RemoveDuplicatesFrom()`.
+
+This asset is explicitly emptied during the second iteration of the parser 
+function `RemoveDuplicatesFrom()`.
 
 \
 
@@ -1121,7 +1186,13 @@ TODO
 
 **Description:**
 
-holds strings of confirmed swaps
+Holds all string representations of rows that are confirmed to have swapped 
+entries.
+
+While this program iterates through each row of a file, it will check if 
+the current row matches any row already stored in this asset. If a match is 
+found, the string representation of the current row will be added to 
+this asset.
 
 **Data Type:**
 
@@ -1129,7 +1200,14 @@ holds strings of confirmed swaps
 
 **Notes:**
 
-TODO
+There can be multiple string representations that are identical to each other 
+in this asset.
+
+This asset is built during the first iteration of the parser function 
+`RemoveDuplicatesFrom()`.
+
+This asset is explicitly emptied during the second iteration of the parser 
+function `RemoveDuplicatesFrom()`.
 
 \
 
@@ -1137,7 +1215,11 @@ TODO
 
 **Description:**
 
-holds locations of rows involved with duplicates
+Holds unique string representations of rows that are confirmed to be 
+duplicates to remove and/or to warn of along with the locations of each of 
+those rows.
+
+TODO; last number is reference duplicate
 
 **Data Type:**
 
@@ -1145,7 +1227,13 @@ holds locations of rows involved with duplicates
 
 **Notes:**
 
-TODO
+There are no string representations that are identical to each other 
+in this asset.
+
+This asset is built during the first iteration of the parser function 
+`RemoveDuplicatesFrom()`.
+
+This asset is never explicitly emptied.
 
 \
 
@@ -1153,7 +1241,10 @@ TODO
 
 **Description:**
 
-holds locations of rows involved with swaps
+Holds unique string representations of rows that are confirmed to have swapped 
+entries along with the locations of each of those rows.
+
+TODO; first number is reference swap
 
 **Data Type:**
 
@@ -1161,15 +1252,24 @@ holds locations of rows involved with swaps
 
 **Notes:**
 
-TODO
+There are no string representations that are identical to each other 
+in this asset.
+
+This asset is built during the first iteration of the parser function 
+`RemoveDuplicatesFrom()`.
+
+This asset is never explicitly emptied.
 
 \
 
-## Assets for `CreateLogFile()`
+## **Assets for `CreateLogFile()`**
 ### `add_log()`
 **Description:**
 
-entry given is appended to the log file; returns log message itself
+Returns inputted log message itself while recording the input to be appended 
+to the log file later on.
+
+Stores inputted log in the asset `logs`.
 
 **Declaration:**
 
@@ -1179,11 +1279,17 @@ entry given is appended to the log file; returns log message itself
 
 `log`
 
-> TODO
+> Message to append to the log file.
 
 **Notes:**
 
-TODO
+**TIP:** This function can be treated as a C++ `std::string` object in itself. 
+For example, printing to the console directly with `std::cout` using this 
+function allows for simultaneous printing to the console and log recording 
+in the asset `logs`.
+
+Although the message is copied verbatim to the asset `logs`, a line break 
+is appended to each message by the function `CreateLogFile()` later on.
 
 \
 
@@ -1191,7 +1297,8 @@ TODO
 
 **Description:**
 
-holds log entries
+Holds record of log entries throughout this program added by the function 
+`add_log()`.
 
 **Data Type:**
 
@@ -1199,7 +1306,8 @@ holds log entries
 
 **Notes:**
 
-TODO
+This asset is built by the function `add_log()` and is accessed by the 
+function `CreateLogFile()`.
 
 <!--
 CSV stands for comma-separated values. 
@@ -1225,6 +1333,12 @@ patients during screenings.
 # **Advanced Setup**
 
 Below are some alternative ways to run this program.
+
+\
+
+## **Custom Initialization**
+
+TODO
 
 \
 
@@ -1267,19 +1381,17 @@ parameters.
 
 \
 
-## **Custom Initialization**
-
-TODO
-
-\
-
-## **Keep Intermediate Files**
+## **Retain Intermediate Files**
 
 TODO
 
 ---
 
 # **Troubleshooting**
+
+**NOTE:** Some solutions may require running the custom version of this 
+program to initialize more advanced parameters (see Advanced Setup; Custom 
+Initialization).
 
 All these suggestions below are assuming this program was compiled or run on a 
 computer using Windows 10.
@@ -1365,12 +1477,13 @@ Be sure that the parameters **DELIMITER_CLEAN** and **DELIMITER_CSV** are
 initialized properly. This means making sure that the character for 
 **DELIMITER_CLEAN** was not used anywhere in the raw input CSV file (a 
 patient may have used and submitted it). If so, initialize **DELIMITER_CLEAN** 
-to an alternative character not present in the raw input CSV file. Otherwise, 
-check that the raw input CSV file is delimited by the character 
-set by **DELIMITER_CSV** and initialize accordingly. One way to check is 
-to open the raw input CSV file with a text editor like Notepad (can be done 
-by right-clicking on the file and selecting "Open with" or by temporarily 
-changing the file extension from ".csv" to ".txt" and opening that file again).
+to an alternative character not present in the raw input CSV file (see 
+Advanced Setup; Custom Initialization). Otherwise, check that the raw input 
+CSV file is delimited by the character set by **DELIMITER_CSV** and 
+initialize accordingly. One way to check is to open the raw input CSV file 
+with a text editor like Notepad (can be done by right-clicking on the file 
+and selecting "Open with" or by temporarily changing the file extension from 
+".csv" to ".txt" and opening that file again).
 
 If none of these solutions work, contact the administrator, as the SHF server 
 may have undergone a formatting change.
