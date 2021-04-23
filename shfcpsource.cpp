@@ -1150,7 +1150,8 @@ std::string init_NAME_INPUT()
     const std::string default_name = "inputForCardea";
 
     std::string name;
-    std::cout << "What is the name of the input file? (.csv will be automaticaly appended) (NAME_INPUT)" << std::endl;
+    std::cout << "What is the name of the input file? (.csv will be automaticaly appended)" 
+        << ((MODE == "EXPRESS") ? "" : " (NAME_INPUT)") << std::endl; // include parameter name when NOT in express mode
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
@@ -1168,7 +1169,8 @@ std::string init_NAME_OUTPUT()
     const std::string default_name = "outputForCardea";
 
     std::string name;
-    std::cout << "How should the output file be named? (.csv will be automaticaly appended) (NAME_OUTPUT)" << std::endl;
+    std::cout << "How should the output file be named? (.csv will be automaticaly appended)" 
+        << ((MODE == "EXPRESS") ? "" : " (NAME_OUTPUT)") << std::endl; // include parameter name when NOT in express mode
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
@@ -1186,7 +1188,8 @@ std::string init_NAME_EVENT()
     const std::string default_name = "screeningName";
     
     std::string name;
-    std::cout << "What is the screening name according to the consent form file name? (NAME_EVENT)" << std::endl;
+    std::cout << "What is the screening name according to the consent form file name?"
+        << ((MODE == "EXPRESS") ? "" : " (NAME_EVENT)") << std::endl; // include parameter name when NOT in express mode
     std::getline(std::cin, name);
     if (name.empty()) // nothing entered, use default
     {
@@ -1203,7 +1206,8 @@ std::string init_NAME_FORM_PATH()
 {
     const std::string default_name = "C:\\Users\\Bryan\\SHF\\Heart Screenings\\Forms"; // escaped characters; C:\Users\Bryan\SHF\Heart Screenings\Forms
     
-    std::cout << "What is the path to the consent forms? (NAME_FORM_PATH)" << std::endl;
+    std::cout << "What is the path to the consent forms?"
+        << ((MODE == "EXPRESS") ? "" : " (NAME_FORM_PATH)") << std::endl; // include parameter name when NOT in express mode
     while (true) // keep prompting for path name until a valid path is given
     {
         std::string name;
@@ -1391,6 +1395,10 @@ char init_DELIMITER_CSV()
 /* Function for Advanced Setup */
 std::string init_MODE()
 {
+    /*
+        ASCII text art was generated from or adapted from https://patorjk.com/software/taag/.
+        The Saving Hearts Foundation logo was adapted from http://loveascii.com/hearts.html.
+    */
     std::cout << R"(******************************************************************************************
 ******************************************************************************************
                      _                                   _         
