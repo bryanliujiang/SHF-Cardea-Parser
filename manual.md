@@ -404,10 +404,16 @@ sanitation stage.
 
 **Notes:**
 
-Note that the ".csv" extension is not automatically applied to this parameter. 
+The ".csv" extension is not automatically applied to this parameter.
+
 There is nothing inherently special about the default name of this parameter; 
-the name was chosen to be descriptive. This file is automatically deleted by 
-this program.
+the name was chosen to be descriptive. 
+
+Unless this program is running in Retain Mode (see Advanced Setup; Retain 
+Mode), files having this name in the same folder as this program are 
+automatically deleted by `Parse()` (see Functions and Assets; `Parse()`). 
+To avoid unintended file deletions, avoid initializing other file-name 
+parameters with the same name initialized for this parameter.
 
 \
 
@@ -427,10 +433,16 @@ Cardea-compatible conversion stage.
 
 **Notes:**
 
-Note that the ".csv" extension is not automatically applied to this parameter. 
+The ".csv" extension is not automatically applied to this parameter.
+
 There is nothing inherently special about the default name of this parameter; 
-the name was chosen to be descriptive. This file is automatically deleted by 
-this program.
+the name was chosen to be descriptive.
+
+Unless this program is running in Retain Mode (see Advanced Setup; Retain 
+Mode), files having this name in the same folder as this program are 
+automatically deleted by `Parse()` (see Functions and Assets; `Parse()`). 
+To avoid unintended file deletions, avoid initializing other file-name 
+parameters with the same name initialized for this parameter.
 
 \
 
@@ -1501,7 +1513,7 @@ beginning of this program.
 **Notes:**
 
 Having an explicit keyword for this mode is helpful when running this program 
-from a text file containing the pre-initialized program parameters (See 
+from a text file containing the pre-initialized program parameters (see 
 Advanced Setup; Accelerated Parameter Initialization) since it allows for 
 visible indication that the default of this program is to be run instead of 
 just having a blank line at the top of the document. 
