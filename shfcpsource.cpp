@@ -1,16 +1,16 @@
 /* Ignore; needed to run program properly */
-#include <iostream>
-#include <string>
-#include <vector>
-#include <unordered_set>
-#include <unordered_map>
-#include <fstream>
-#include <sstream>
-#include <cstdio>
-#include <cctype>
-#include <algorithm>
-#include <iterator>
-#include <filesystem> // requires C++17
+#include <iostream> // std::cout, std::cin, ::ignore()
+#include <string> // std::string, std::string::c_str()
+#include <vector> // std::vector
+#include <unordered_set> // std::unordered_set, std::unordered_multiset
+#include <unordered_map> // std::unordered_map
+#include <fstream> // std::ifstream, std::ofstream, ::ignore()
+#include <sstream> // std::istringstream
+#include <cstdio> // std::remove()
+#include <cctype> // std::isspace(), ::tolower, ::toupper
+#include <algorithm> // std::replace(), std::transform()
+#include <iterator> // ::begin(), ::end()
+#include <filesystem> // std::filesystem::exists(), std::filesystem::directory_iterator() // requires C++17
 
 /* Ignore; for welcome message and advanced setup */
 std::string init_MODE();
@@ -40,8 +40,8 @@ const std::string FORM_NO = init_FORM_NO(); // what to print into Consent column
 
 /* Should be more wary about initializing the following parameters */
 const std::string NAME_LOG = init_NAME_LOG(); // desired name of log file detailing program events
-const std::string NAME_INPUT_CLEAN = init_NAME_INPUT_CLEAN(); // ignore; needed to sanitize input properly
-const std::string NAME_OUTPUT_DUPLICATES = init_NAME_OUTPUT_DUPLICATES(); // ignore; needed to remove duplicates properly
+const std::string NAME_INPUT_CLEAN = init_NAME_INPUT_CLEAN(); // intermediate file needed to sanitize input properly
+const std::string NAME_OUTPUT_DUPLICATES = init_NAME_OUTPUT_DUPLICATES(); // intermediate file needed to remove duplicates properly
 const std::string NAME_ENGLISH = init_NAME_ENGLISH(); // how it was indicated in the raw input csv that the forms were filled out in English
 const char DELIMITER_CLEAN = init_DELIMITER_CLEAN(); // which singular character to forbid while filling out forms; needed to sanitize input properly
 const char DELIMITER_CSV = init_DELIMITER_CSV(); // how raw input csv delimits cells; needs to be cleaned out by sanitizer function
@@ -132,7 +132,7 @@ void Parse()
    //////////////////////////////////// STAGE 1: SANITATION //////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-   /* Ignore; checks if raw input csv can be opened */
+   /* Checks if raw input csv can be opened */
     std::ifstream raw_input(NAME_INPUT);
     if (!raw_input)
     {
@@ -151,7 +151,7 @@ void Parse()
     //////////////////////////// STAGE 2: CARDEA-COMPATIBLE CONVERSION ////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Ignore; checks if sanitized input file can be opened */
+    /* Checks if sanitized input file can be opened */
     std::ifstream sanitized_input(NAME_INPUT_CLEAN);
     if (!sanitized_input)
     {
@@ -178,7 +178,7 @@ void Parse()
     ///////////////////////////////// STAGE 3: DUPLICATE ACTION ///////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Ignore; checks if output still with duplicates file can be opened */
+    /* Checks if output still with duplicates file can be opened */
     std::ifstream output_with_duplicates(NAME_OUTPUT_DUPLICATES);
     if (!output_with_duplicates)
     {
@@ -217,7 +217,7 @@ void Sanitize(std::ifstream& input)
     std::string row; // holds current row of raw input csv
     while (std::getline(input, row)) // iterate through every row of raw input csv
     {
-        std::stringstream iss(row); // allows row to be broken down into cells separated by dirty delimiter
+        std::istringstream iss(row); // allows row to be broken down into cells separated by dirty delimiter
         std::string cell; // holds and delivers contents of cleaned cell
         bool inquotes = false; // whether contents are inside quotation marks or not
         char c; // wink wink ;)
@@ -1401,12 +1401,12 @@ std::string init_MODE()
     */
     std::cout << R"(******************************************************************************************
 ******************************************************************************************
-                     _                                   _         
-                    | |                                 | |        
-     __      __ ___ | |  ___  ___   _ __ ___    ___     | |_  ___  
-     \ \ /\ / // _ \| | / __|/ _ \ | '_ ` _ \  / _ \    | __|/ _ \ 
-      \ V  V /|  __/| || (__| (_) || | | | | ||  __/    | |_| (_) |
-       \_/\_/  \___||_| \___|\___/ |_| |_| |_| \___|     \__|\___/ 
+                    _                                   _         
+                   | |                                 | |        
+    __      __ ___ | |  ___   ___   _ __ ___    ___    | |_   ___  
+    \ \ /\ / // _ \| | / __| / _ \ | '_ ` _ \  / _ \   | __| / _ \ 
+     \ V  V /|  __/| || (__ | (_) || | | | | ||  __/   | |_ | (_) |
+      \_/\_/  \___||_| \___| \___/ |_| |_| |_| \___|    \__| \___/ 
 
         ....           ....         _____            _____   _____   ______           
       .::::::::     ::::::::.      / ____|    /\    |  __ \ |  __ \ |  ____|    /\    
@@ -1499,7 +1499,7 @@ std::string init_MODE()
                                   aorta
                 )" << std::endl;
 
-            std::cout << "ASCII art from http://loveascii.com/hearts.html \n\n"
+            std::cout << "ASCII art from <http://loveascii.com/hearts.html>. \n\n"
                 "Press ENTER to start this program." << std::endl;
         }
         else
