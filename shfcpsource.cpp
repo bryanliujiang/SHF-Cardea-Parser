@@ -9,7 +9,8 @@
 #include <cstdio> // std::remove()
 #include <cctype> // std::isspace(), ::tolower, ::toupper
 #include <algorithm> // std::replace(), std::transform()
-#include <iterator> // ::begin(), ::end()
+#include <iterator> // std::next(), ::begin(), ::end()
+#include <limits> // std::numeric_limits::max()
 #include <filesystem> // std::filesystem::exists(), std::filesystem::directory_iterator() // requires C++17
 
 /* Ignore; for welcome message and advanced setup */
