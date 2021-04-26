@@ -1,13 +1,23 @@
 ---
+listings: true
 title: "SHF Cardea Parser Manual"
 output:
   pdf_document: 
     toc: yes
-    latex_engine: xelatex
     number_sections: yes
+    latex_engine: xelatex
     toc_depth: 3
   html_document: default
 mainfont: Georgia
+header-includes: |
+  ```{=latex}
+  % note that in pandoc, without a code block for latex, all of the lines in header-includes are interpreted as Markdown (so % at start of line is escaped \%, and # at start of line becomes \section)!
+  % since \lstset is global, do not change font size here, change in separate style
+  \lstset{% for listings    basicstyle=\ttfamily,
+    breaklines=true
+  }
+  \lstdefinestyle{lstsmaller}{basicstyle=\scriptsize\ttfamily}
+  ```
 ---
 
 <!--
@@ -40,13 +50,19 @@ not excessively) commented so that it can be understood by someone not
 fluent with the specific programming language but having general programming 
 knowledge.
 
-This program may not have been written in the most efficient way, but it was 
+This program was intentionally not written in the most efficient way, but was 
 written to prioritize portability (all components of this program resides 
 in one file containing the source code) and beginner-friendliness so that 
 one would require minimal training to be able to maintain this program. For 
 example, the amount of global variables (typically discouraged when writing 
 a program) could have been minimized, but the decision was made to keep them 
-for sake of simplifying/making easier to read the source code.
+for sake of simplifying/making easier to read the source code. Although the 
+source code of this program may not be the best reference for general 
+programming strategies, it better serves as an educational asset for anyone 
+with basic programming knowledge wishing to learn the C++ programming language 
+itself, as a diverse set of C++ concepts have been included in the 
+implementation of this program along with their explanations throughout 
+this manual and the source code itself.
 
 This program was written in C++ and compiled in Windows 10 Visual Studio 2019, 
 using (and requiring at the earliest) the ISO C++17 Standard. This program is 
@@ -829,22 +845,343 @@ still containing duplicates, passed by reference.
 
 **Notes:**
 
-TODO; 
-to_remove overrides settings of to_warn; 
-assumes to_warn columns are subset of to_remove columns; 
-delimiter-first indicates that row contained a duplicate to remove by default; 
-reference duplicate and reference swap definitions and row location storage
-<!-- 
-the row that the other rows are 
-compared to to determine if they are duplicates
+Consider swaps to be a special case of duplicates, even though this 
+manual, in many instances, may refer to duplicates and swaps as separate 
+entities. Swaps are only warned of, never to remove.
 
-the row that the other rows are 
-compared to to determine if they are swaps
--->
-everything on list_of_duplicates matches to a duplicate to log;
-everything on list_of_swaps matches to a swap to log;
-notice above that there is no match for the reference;
-explain the naming of the iterators;
+This function distinguishes the "reference duplicate" from the other 
+duplicates, and the "reference swap" from the other swaps. Below are 
+their definitions.
+
+*Reference duplicate:* the duplicate which other potential duplicates are 
+compared to.
+
+> Out of all rows considered to be duplicates, this program 
+considers the latest row to be the reference duplicate. The reason is that 
+the same patient may submit their information multiple times, resulting in 
+duplicate rows. However, their latest submission is probably the most 
+accurate submission and is thus designated to be the reference duplicate.
+
+> The reference duplicate is the only row involved with duplicates that is 
+not removed or warned of in the event logs, but that the other duplicates 
+refer to in the event logs.
+
+> In `list_of_duplicates_found` (see Functions and Assets; 
+`list_of_duplicates_found`), the last row number in the container holding 
+the row locations is designated as the row number of the reference duplicate.
+
+*Reference swap:* the swap which other potential swaps are compared to.
+
+> Out of all rows considered to be swaps, this program considers the latest 
+row of the original row pattern to be the reference swap. The reason for the 
+latest row is that it is possible that a swap might have duplicates too (see 
+reasoning for defining the reference duplicate just above). The reason for the 
+original row pattern is that the original pattern naturally serves as 
+the reference that other rows are swapped from.
+
+> The reference swap is the only row involved with swaps that is not warned of 
+in the event logs but that the other swaps refer to in the event logs. 
+However, this does not necessarily imply that the reference swap is the 
+"true" row, as it is possible that the original row was the mistake, and its 
+swapped version should be the row to retain.
+
+> In `list_of_swaps_found` (see Functions and Assets; `list_of_swaps_found`), 
+the first row number in the container holding the row locations is designated 
+as the row number of the reference swap.
+
+This function consists of three major components: 
+
+1) First iteration
+1) Second iteration
+1) Logging
+
+#### **First Iteration**
+
+> **Purpose:**
+
+> Find duplicates and swaps from the tracked columns.
+
+> **Procedure:**
+
+1) After ignoring the header row, build assets 
+`potential_duplicate_to_remove`, \
+`potential_duplicate_to_warn`, and 
+`potential_swap` from their respectively tracked columns (see Functions 
+and Assets; `track_duplicates_including_this()`) for the current row.
+
+1) Find duplicates to remove.
+
+    A C++ iterator named `find_to_remove` scans through 
+    `rows_scanned_for_duplicates` for a match to 
+    `potential_duplicate_to_remove`. If no match is found, 
+    `potential_duplicate_to_remove` is inserted into 
+    `rows_scanned_for_duplicates`. Otherwise, `potential_duplicate_to_remove` 
+    is inserted into `list_of_duplicates` and `list_of_duplicates_found`.
+
+1) Find duplicates to warn of.
+
+    A C++ iterator named `find_to_warn` scans through 
+    `rows_scanned_for_duplicates` for a match to 
+    `potential_duplicate_to_warn`. If no match is found, 
+    `potential_duplicate_to_warn` is inserted into 
+    `rows_scanned_for_duplicates`. Otherwise, `potential_duplicate_to_warn` 
+    is inserted into `list_of_duplicates` and `list_of_duplicates_found`.
+
+1) Find swaps.
+
+    A C++ iterator named `find_swap` scans through 
+    `rows_scanned_for_duplicates` for a match to 
+    `potential_swap`. If no match is found, a `swapped()` version of 
+    `potential_swap` is inserted into 
+    `rows_scanned_for_duplicates`. Otherwise, `potential_swap` 
+    is inserted into `list_of_swaps` and a `swapped()` version of 
+    `potential_swap` is inserted into `list_of_swaps_found`.
+
+1) Clear assets `potential_duplicate_to_remove`, 
+`potential_duplicate_to_remove`, and `potential_swap`.
+
+    This must be done explicitly since these assets have global scope.
+
+1) Repeat the above steps for every row onward in the input file.
+
+    - Each row is processed using `std::getline()`
+    - A counter keeping track of the current row number is incremented
+
+1) Set up for next iteration.
+
+    - Reset `std::ifstream` object so that `std::getline()` starts scanning 
+    from the beginning of the document again
+    - Increment iteration counter
+
+> **Notes:**
+
+> Before the first iteration begins, an `std::ofstream` object creates 
+the final output file **NAME_OUTPUT** and adds the header row defined 
+by **HEADERS** to the file. Nothing more is added until during the 
+second iteration.
+
+> The logic of this procedure results in `list_of_duplicates` containing 
+enough matches to match to every confirmed duplicate EXCEPT for the 
+reference duplicate itself. This is important to set up for the second 
+iteration when the matches in `list_of_duplicates` serves as a tally 
+for each duplicate to take action against. Essentially, one match in 
+`list_of_duplicates` corresponds to one duplicate row; when one duplicate 
+row is removed or warned of, its corresponding match in `list_of_duplicates` 
+is erased. In the end, what is left untouched would be the reference 
+duplicate, as it does not have its own corresponding match in 
+`list_of_duplicates`. This same logic applies to the matches in 
+`list_of_swaps`. For information about these assets, see Functions and 
+Assets; `list_of_duplicates`, `list_of_swaps`.
+
+#### **Second Iteration**
+
+> **Purpose:**
+
+> Take action against the found duplicates and swaps.
+
+> **Procedure:**
+
+1) After ignoring the header row, build assets 
+`potential_duplicate_to_remove`, \
+`potential_duplicate_to_warn`, and 
+`potential_swap` from their respectively tracked columns (see Functions 
+and Assets; `track_duplicates_including_this()`) for the current row.
+
+1) Take action against duplicates.
+
+    A C++ iterator named `find_to_remove` scans through 
+    `list_of_duplicates` for a match to `potential_duplicate_to_remove`. 
+    One of two scenarios plays out.
+    
+    1) No match is found, meaning the current row is NOT a duplicate to 
+    remove.
+    
+        The current row is added to the final output file, with its 
+        **DELIMITER_CLEAN** delimiters replaced by the original 
+        **DELIMITER_CSV** delimiters. This is the only point in the 
+        second iteration that anything is added to the final output
+        file **NAME_OUTPUT**.
+        
+        A C++ iterator named `find_reference_duplicate_of_remove` scans 
+        through `list_of_duplicates_found` for a match to 
+        `potential_duplicate_to_remove`. The purpose is to determine if the 
+        current row is the reference duplicate. If a match is found, then the 
+        current row number is added to the respective 
+        `list_of_duplicates_found` container, representing the location of the 
+        reference duplicate of duplicates to remove. This should be the last 
+        row number added (since the iterator `find_to_remove` did not find 
+        a match to `potential_duplicate_to_remove` in `list_of_duplicates`).
+        
+        Although the current row is not a duplicate to remove, it could still 
+        be a duplicate to warn of. The next part takes care of this 
+        possibility.
+        
+        A C++ iterator named `find_to_warn` scans through 
+        `list_of_duplicates` for a match to `potential_duplicate_to_warn`. 
+        One of two scenarios plays out. Notice the parallel to the procedure 
+        for handling duplicates to remove.
+        
+        1) No match is found, meaning the current row is NOT a duplicate to 
+        warn of.
+    
+            A C++ iterator named `find_reference_duplicate_of_warn` scans 
+            through `list_of_duplicates_found` for a match to 
+            `potential_duplicate_to_warn`. The purpose is to determine if the 
+            current row is the reference duplicate. If a match is found, then 
+            the current row number is added to the respective 
+            `list_of_duplicates_found` container, representing the location of 
+            the reference duplicate of duplicates to warn of. This should be 
+            the last row number added (since the iterator `find_to_warn` did 
+            not find a match to `potential_duplicate_to_warn` in 
+            `list_of_duplicates`).
+        
+        1) A match is found, meaning the current row IS a duplicate to warn 
+        of.
+        
+            One instance of this match is erased from `list_of_duplicates`. 
+            A C++ iterator named `record_row` scans through 
+            `list_of_duplicates_found` for `potential_duplicate_to_warn`. 
+            The purpose is to record the location of the duplicate to warn of. 
+            The current row number is then added to the respective 
+            `list_of_duplicates_found` container.
+    
+    
+    1) A match is found, meaning the current row IS a duplicate to remove.
+    
+        Since the current row is a duplicate to remove, this row is not 
+        added to the final output file. This omission simulates its 
+        removal.
+
+        One instance of this match is erased from `list_of_duplicates`. 
+        A C++ iterator named `record_row` scans through 
+        `list_of_duplicates_found` for `potential_duplicate_to_remove`. 
+        The purpose is to record the location of the duplicate to remove. 
+        The current row number is then added to the respective 
+        `list_of_duplicates_found` container.
+        
+        Since the current row meets the criteria to be a duplicate to 
+        remove (stricter), it is expected that it also meets the criteria 
+        to be a duplicate to warn of (less strict). Thus, a match should 
+        exist for `potential_duplicate_to_warn` in `list_of_duplicates` 
+        for the current row also.
+        
+        A C++ iterator named `find_to_warn` scans through 
+        `list_of_duplicates` for a match to `potential_duplicate_to_warn`. 
+        If a match is found, One instance of this match is erased from 
+        `list_of_duplicates`. However, the current row number is not added 
+        to the respective `list_of_duplicates_found` container for 
+        `potential_duplicate_to_warn` as to not simultaneously log that 
+        the current row is both a duplicate that is removed and warned of. 
+        In other words, a row determined to be a duplicate to remove 
+        is processed as a duplicate to remove, overriding the processing 
+        of being a duplicate to warn of.
+    
+1) Take action against swaps.
+
+    A C++ iterator named `find_reference_swap` scans through 
+    `list_of_swaps_found` for a match to `potential_swap`. The purpose 
+    is to determine if the current row is the reference swap. If a match 
+    is found, then the current row number is added to the respective 
+    `list_of_swaps_found` container (which is locally renamed to 
+    `record_of_row_numbers` for readability), representing the location of 
+    the reference swap which other swaps are defined from. This should 
+    ultimately be the first row number added (since if `record_of_row_numbers` 
+    were empty beforehand, then adding the current row number would make it 
+    the first row number added, but if `record_of_row_numbers` were not empty 
+    beforehand, then the current row number is made to replace the previously 
+    added reference swap location).
+    
+    A C++ iterator named `find_swap` scans through `list_of_swaps` for 
+    a match to `potential_swap`. If a match is found, meaning the current 
+    row is a swap, one instance of this match is erased from `list_of_swaps`. 
+    A C++ iterator named `record_row` scans through 
+    `list_of_swaps_found` for the `swapped()` version of `potential_swap` 
+    (which is the pattern of the reference swap). The purpose is to record 
+    the location of this current row being a swap. The current row number 
+    is then added to the respective `list_of_swaps_found` container.
+
+1) Repeat the above steps for every row onward in the input file.
+
+    - Each row is processed using `std::getline()`
+    - A counter keeping track of the current row number is incremented
+
+1) Close the `std::ofstream` object for **NAME_OUTPUT**.
+
+    - Guarantees that nothing more will be added to the final output 
+    file **NAME_OUTPUT**.
+
+> **Notes:**
+
+> This process assumes that the criteria to remove duplicates is stricter 
+than the criteria to warn of duplicates (more columns marked `true` for 
+`to_remove` than for `to_warn` in `track_duplicates_including_this()`; see 
+Functions and Assets; `track_duplicates_including_this()`), justifying having 
+the processing of duplicates to warn of to be nested within the processing 
+of duplicates to remove.
+    
+#### **Logging**
+
+> **Purpose:**
+
+> Record the events that took place to the log.
+
+> **Procedure:**
+
+1) Log duplicates.
+
+    A C++ iterator named `found` scans through every duplicate stored in 
+    `list_of_duplicates_found`. For every duplicate scanned, another 
+    C++ iterator named `row_num` scans through every row number recorded 
+    in that respective `list_of_duplicates_found` container.
+    
+    If the duplicate scanned by `found` has **DELIMITER_CLEAN** as the 
+    first character of its row string, then that duplicate was removed. 
+    It is added to the log that the currently scanned row number was 
+    removed for being a duplicate of the row number of the reference 
+    duplicate. Otherwise, if the duplicate scanned by `found` does not 
+    have **DELIMITER_CLEAN** as the first character of its row string, 
+    then that duplicate is to be given a warning. A warning is added 
+    to the log that the currently scanned row number might be a duplicate 
+    of the row number of the reference duplicate.
+    
+    `row_num` then moves on to scan for the next recorded row number, and 
+    the above step is repeated.
+    
+    Once `row_num` reaches the last row number recorded for a duplicate, 
+    no logging occurs, as this row number represents the location of the 
+    reference duplicate. Instead, `found` moves on to scan for the next 
+    stored duplicate.
+
+1) Log swaps.
+
+    A C++ iterator named `found` scans through every duplicate stored in 
+    `list_of_swaps_found`. For every swap scanned, another C++ iterator 
+    named `row_num` scans through every row number recorded in that 
+    respective `list_of_swaps_found` container.
+    
+    When `row_num` reaches the first row number recorded for a swap, 
+    no logging occurs, as this row number represents the location of the 
+    reference swap. Instead, `row_num` moves on to scan for the next 
+    recorded row number.
+    
+    It is added to the log a warning that the currently scanned row number 
+    might be a swapped version of the row number of the reference swap.
+    
+    `row num` then moves on to scan the next recorded row number, and the 
+    above step is repeated. After the last recorded row number is scanned 
+    and logged, `found` moves on to scan for the next stored duplicate.
+
+> **Notes:**
+
+> This logging component realizes the importance of having separate 
+entry-delimiter orders when building `potential_duplicate_to_remove` and 
+`potential_duplicate_to_warn` with `track_duplicates_including_this()`; 
+that way, the appropriate event log can be made with ease from the row string 
+alone without necessitating including any additional outside complexities just 
+to be able to distinguish duplicates to remove from duplicates to warn of. 
+This program has the former be built delimiter-first while the latter 
+entry-first. For more information about these assets and the definition of 
+a row string, see Functions and Assets; `track_duplicates_including_this()`).
 
 \
 
@@ -1015,12 +1352,33 @@ The current order of the variables is
 
 **Description:**
 
-Defines duplicates and their strictness criteria.
+Defines duplicates and their strictness criteria by building specific 
+string representations of those rows.
 
 Builds row-wise the assets `potential_duplicate_to_warn` for entries marked 
 `true` by the parameter `to_warn`, `potential_swap ` for entries marked 
 `true` by the parameter `for_swap`, and `potential_duplicate_to_remove` for 
 entries marked `true` by the parameter `to_remove`.
+
+*String representation of a row:* also referred to as *row string*; a special 
+encoding of a row to be tracked for duplicates.
+
+> Row strings serve as a convenient way to represent any particular row 
+in this program so that it can be properly identified and processed for 
+duplicate tracking. The assets that are designated to hold and be 
+processed as row strings are 
+
+> - `potential_duplicate_to_warn`
+- `potential_swap`
+- `potential_duplicate_to_remove`
+
+> A row string consists of the contents of the entries that are tracked by 
+this function, delimited by the **DELIMITER_CLEAN** character. See the 
+descriptions of the parameters below for how the row string of a specific 
+asset is encoded/built.
+
+> This term is unique to this program and has no special meaning outside 
+the context of this program.
 
 Matching entries with mismatching capitalization are still considered 
 identical, but those with mismatching whitespace characters are not.
@@ -1062,6 +1420,10 @@ must match to trigger this action). Builds asset
 **DELIMITER_CLEAN**.
 
 **Notes:**
+
+Consider swaps to be a special case of duplicates, even though this 
+manual, in many instances, may refer to duplicates and swaps as separate 
+entities.
 
 Although this function technically marks one entry, the function 
 `RemoveDuplicatesFrom()` iterates column-wise through every row. Thus, 
@@ -1310,6 +1672,20 @@ This asset is built during the first iteration of the parser function
 This asset is explicitly emptied during the second iteration of the parser 
 function `RemoveDuplicatesFrom()`.
 
+Although the name of this asset may suggest that it is a C++ `std::list` 
+container, it is actually a C++ `std::unordered_multiset` container.
+
+An arguably more space-efficient choice of container for how this asset is 
+used could have been a C++ `std::unordered_map<std::string, int>` 
+implementation where a count of the strings is stored instead of multiple 
+instances of strings. However, the decision for the current implementation 
+was made for simplicity purposes (fewer numbers for someone trying to 
+maintain the source code to keep track of), conceptualization purposes 
+(intuitive to match the row string to a row string than to match the row 
+string to an integer count of row strings), and diversification purposes 
+(a beginner to C++ can be exposed to more types of C++ containers for 
+learning).
+
 \
 
 ### `list_of_swaps`
@@ -1343,6 +1719,20 @@ This asset is built during the first iteration of the parser function
 
 This asset is explicitly emptied during the second iteration of the parser 
 function `RemoveDuplicatesFrom()`.
+
+Although the name of this asset may suggest that it is a C++ `std::list` 
+container, it is actually a C++ `std::unordered_multiset` container.
+
+An arguably more space-efficient choice of container for how this asset is 
+used could have been a C++ `std::unordered_map<std::string, int>` 
+implementation where a count of the strings is stored instead of multiple 
+instances of strings. However, the decision for the current implementation 
+was made for simplicity purposes (fewer numbers for someone trying to 
+maintain the source code to keep track of), conceptualization purposes 
+(intuitive to match the row string to a row string than to match the row 
+string to an integer count of row strings), and diversification purposes 
+(a beginner to C++ can be exposed to more types of C++ containers for 
+learning).
 
 \
 
@@ -1382,6 +1772,9 @@ This asset is never explicitly emptied.
 The row location of the reference duplicate is made to be the last number 
 stored in the C++ `std::vector<int>` data structure by the parser function 
 `RemoveDuplicatesFrom()`.
+
+Although the name of this asset may suggest that it is a C++ `std::list` 
+container, it is actually a C++ `std::unordered_map` container.
 
 \
 
@@ -1424,6 +1817,9 @@ This asset is never explicitly emptied.
 The row location of the reference swap is made to be the first number 
 stored in the C++ `std::vector<int>` data structure by the parser function 
 `RemoveDuplicatesFrom()`.
+
+Although the name of this asset may suggest that it is a C++ `std::list` 
+container, it is actually a C++ `std::unordered_map` container.
 
 \
 
