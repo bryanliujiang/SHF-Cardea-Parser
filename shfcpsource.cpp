@@ -1,6 +1,6 @@
 /* Ignore; needed to run program properly */
 #include <iostream> // std::cout, std::cin, ::ignore()
-#include <string> // std::string, std::string::c_str()
+#include <string> // std::string, std::string::c_str(), std::to_string(), std::stoi()
 #include <vector> // std::vector
 #include <unordered_set> // std::unordered_set, std::unordered_multiset
 #include <unordered_map> // std::unordered_map
