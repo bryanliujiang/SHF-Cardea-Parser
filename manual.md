@@ -20,25 +20,6 @@ header-includes: |
   ```
 ---
 
-<!--
-# **Table of Contents**
-1) Overview
-
-1) Directions
-
-1) Program Parameters
-
-1) Functions and Assets
-
-1) Advanced Setup
-
-1) Troubleshooting
-
-1) Other Resources
--->
-
----
-
 # **Overview**
 This manual was written to be read and understood by anybody regardless of 
 their background in programming. However, technical terms may be present at 
@@ -170,7 +151,16 @@ along with the log file.
 ---
 
 # **Program Parameters**
-Immediately below is a list of all the user-adjustable parameters, their 
+
+This program contains various constant global variables that will be referred 
+to as the *program parameters* and will have their names in bold throughout 
+this manual. Each program parameter has a corresponding initialization 
+function (a hypothetical program parameter **PARAM** has the corresponding 
+initialization function `init_PARAM()`) that allows for that parameter to be 
+initialized through the program interface upon starting this program. These 
+parameters should be initialized before the C++ `main()` function.
+
+Immediately below is a list of all the interface-adjustable parameters, their 
 default values, and their C++ data types, separated by colons. Ignore the 
 quotation marks. Each parameter is described in detail afterward.
 
@@ -558,7 +548,8 @@ The single character to represent the variables in **NAME_FORM**.
 Be sure to place this character within **NAME_FORM** itself.
 
 This parameter only appears in `consent_form_file_name()` (see Functions and 
-Assets; `consent_form_file_name()`).
+Assets; \
+`consent_form_file_name()`).
 
 \
 
@@ -753,9 +744,16 @@ This function prints a message directly to the program interface.
 
 **Description:**
 
-Sanitizes input file by replacing the default delimiter, specified by 
-**DELIMITER_CSV**, with a clean delimiter, specified by **DELIMITER_CLEAN** 
-(see Program Parameters).
+Sanitizes input file **NAME_INPUT** by replacing the default delimiter, 
+specified by **DELIMITER_CSV**, with a clean delimiter, specified by 
+**DELIMITER_CLEAN** (see Program Parameters).
+
+Scans through each row of **NAME_INPUT**, scanning one character at a time 
+to build a row to add to **NAME_INPUT_CLEAN** that instead replaces 
+**DELIMITER_CSV** with **DELIMITER_CLEAN** whenever outside quotation 
+marks.
+
+Represents the Sanitation Stage.
 
 **Declaration:**
 
@@ -765,7 +763,8 @@ Sanitizes input file by replacing the default delimiter, specified by
 
 `input`
 
-> A C++ `std::ifstream` object of the raw input CSV file, passed by reference.
+> A C++ `std::ifstream` object of the raw input CSV file **NAME_INPUT**, 
+passed by reference.
 
 **Notes:**
 
@@ -786,8 +785,14 @@ used.
 
 **Description:**
 
-Outputs file from a sanitized input file according to Cardea-compatibility 
-requirements.
+Outputs intermediate file **NAME_OUTPUT_DUPLICATES** from a sanitized input 
+file \
+**NAME_INPUT_CLEAN** according to Cardea-compatibility requirements.
+
+Scans through each row of **NAME_INPUT_CLEAN**, selectively including the 
+contents, modifying them as necessary, to form the rows for and be added to  **NAME_OUTPUT_DUPLICATES**.
+
+Represents the Cardea-Compatible Conversion Stage.
 
 **Declaration:**
 
@@ -797,30 +802,90 @@ requirements.
 
 `input`
 
-> A C++ `std::ifstream` object of the intermediate sanitized file, passed 
-by reference.
+> A C++ `std::ifstream` object of the intermediate sanitized file 
+**NAME_INPUT_CLEAN**, passed by reference.
 
 **Notes:**
 
-TODO
+Although it is technically not necessary to include the header row into the 
+intermediate file (this could just be added directly to the final output 
+file), this function does so anyway for sake of consistency in counting row 
+numbers (header row will always be row '1' in the source code and in all 
+output files throughout this program).
+
+This function tracks the current row number it scans to log warnings of any 
+blank entries from the input file.
+
+This function explicitly lays out a respective `std::getline()` call for 
+each column of the input file. Although this may make the function a bit 
+unwieldy and inflated in size due to redundancies (discouraged in 
+programming), the decision was made to have this implementation as to have 
+a straightforward visualization of how an entry is modified and included 
+in the Cardea-compatible output file.
+
+In the source code, each `std::getline()` is labeled by comment with its 
+corresponding column lettering from the input file. Every time content is 
+outputted to the Cardea-compatible output file, that line is labeled with 
+the corresponding column name of the output file (matches the headers 
+defined in **HEADERS**).
+
+In the source code, whenever a column from the input file is not to be 
+included in the Cardea-compatible output file, it is labeled by comment 
+with `// ignore column` as to explicitly indicate this. However, even though 
+the contents from a column may not be included in the output file, that 
+column may still serve a role in properly formatting the output file (for 
+example, tracking the language column of the input file even though such a 
+column is not in the Cardea-compatible output file).
+
+Some columns are tracked to store the variables for the customized 
+function `consent_form_file_name()`. Whenever **NAME_FORM** is modified, 
+this function may also have to be modified as to readjust which columns 
+to track for these variables. Currently, the variables are stored in the 
+following local variables (the capitalization patterns of these variables 
+reflect the naming of their respective headers in **HEADERS**)
+
+- MSN
+- LastName
+- FirstName
+
+The output for the "PGPhone" column will log a warning if an invalid area 
+code was found. Phone numbers in the United States cannot have area codes 
+that start with a '0' or '1'.
+
+The output for the "Height" column requires special considerations.
+
+- Warnings are logged for when height in inches is greater than '12'
+- Entries for height in inches are corrected to be '0' inches whenever a 
+multiple of height in feet is encountered (for example, sometimes a patient 
+mistakenly enters '60' inches for their height in inches when they are 
+exactly '5' feet)
+- The output file requires a specific formatting for the "Height" column that 
+requires combining the columns of the input file for height in feet and 
+height in inches
+- Although the input file does contain an already formatted column for the 
+"Height" column of the output file, it is ignored since that column may 
+have been modified if the input CSV file was saved in Excel
+
+    **NOTE:** Excel automatically converts the Cardea-compatible formatting 
+    of the "Height" column to a date format if the output CSV is subsequently 
+    saved in Excel 
+<!--, requiring this column to be formatted in a particular way-->
+
+The input file contains a fixed number of columns (described by 
+**NUM_LANG_FIELDS**) that are specific to the language a patient submitted 
+their information in. This function tracks which language was used and will 
+skip **NUM_LANG_FIELDS** number of those columns that do not pertain to the 
+language indicated by that row.
+
+This function adds to the output file the initializations of **FORM_YES** 
+and/or **FORM_NO**, depending on whether a particular patient consent form 
+is on file or not.
 
 <!--
-CSV stands for comma-separated values. 
-
-Unfortunately, the SHF server cannot completely 
-catch and correct all the issues from the patient information it receives. 
-
-or if a 
-phone number is valid
-
-However, the quality of the content in the output file is only as good as that 
-of the input file.
-
-Sometimes fields are left empty, sometimes an entry was 
-formatted incorrectly (leaving extra spaces, for example, which Cardea does 
-not handle well), and other times patients submit multiple times, leading to 
-duplicate patient information that can lead to confusion in identifying 
-patients during screenings.
+TODO;
+how language is tracked (boolean, the if-else with fixed var tracking number 
+of lang columns);
+how height is formatted;
 -->
 
 \
@@ -829,8 +894,14 @@ patients during screenings.
 
 **Description:**
 
-Produces output for Cardea with duplicates removed and/or with warnings of 
-them.
+Produces output for Cardea **NAME_OUTPUT** with duplicates removed and/or with 
+warnings of them.
+
+Scans through each row of **NAME_OUTPUT_DUPLICATES** in two iterations, 
+selectively including rows to be added to **NAME_OUTPUT** that are not 
+duplicates to remove.
+
+Represents the Duplicate Action Stage.
 
 **Declaration:**
 
@@ -840,8 +911,8 @@ them.
 
 `input`
 
-> A C++ `std::ifstream` object of the intermediate Cardea-compatible file 
-still containing duplicates, passed by reference.
+> A C++ `std::ifstream` object of the intermediate Cardea-compatible file \
+**NAME_OUTPUT_DUPLICATES** still containing duplicates, passed by reference.
 
 **Notes:**
 
@@ -938,7 +1009,8 @@ and Assets; `track_duplicates_including_this()`) for the current row.
     `potential_swap` is inserted into `list_of_swaps_found`.
 
 1) Clear assets `potential_duplicate_to_remove`, 
-`potential_duplicate_to_remove`, and `potential_swap`.
+`potential_duplicate_to_remove`, and \
+`potential_swap`.
 
     This must be done explicitly since these assets have global scope.
 
@@ -1003,7 +1075,8 @@ and Assets; `track_duplicates_including_this()`) for the current row.
         file **NAME_OUTPUT**.
         
         A C++ iterator named `find_reference_duplicate_of_remove` scans 
-        through `list_of_duplicates_found` for a match to 
+        through \
+        `list_of_duplicates_found` for a match to 
         `potential_duplicate_to_remove`. The purpose is to determine if the 
         current row is the reference duplicate. If a match is found, then the 
         current row number is added to the respective 
@@ -1025,7 +1098,8 @@ and Assets; `track_duplicates_including_this()`) for the current row.
         warn of.
     
             A C++ iterator named `find_reference_duplicate_of_warn` scans 
-            through `list_of_duplicates_found` for a match to 
+            through \
+            `list_of_duplicates_found` for a match to 
             `potential_duplicate_to_warn`. The purpose is to determine if the 
             current row is the reference duplicate. If a match is found, then 
             the current row number is added to the respective 
@@ -1115,7 +1189,8 @@ and Assets; `track_duplicates_including_this()`) for the current row.
 > This process assumes that the criteria to remove duplicates is stricter 
 than the criteria to warn of duplicates (more columns marked `true` for 
 `to_remove` than for `to_warn` in `track_duplicates_including_this()`; see 
-Functions and Assets; `track_duplicates_including_this()`), justifying having 
+Functions and Assets; \
+`track_duplicates_including_this()`), justifying having 
 the processing of duplicates to warn of to be nested within the processing 
 of duplicates to remove.
     
@@ -1241,7 +1316,8 @@ the initialization of **NAME_FORM_PATH**.
 **Notes:**
 
 This function checks if the given path is valid, including for the default 
-initialization of **NAME_FORM_PATH**, using C++ function 
+initialization of \
+**NAME_FORM_PATH**, using C++ function 
 `std::filesystem::exists()`. If the given path were not checked for validity, 
 and an invalid path were passed in, the program crashes.
 
@@ -1357,7 +1433,8 @@ string representations of those rows.
 
 Builds row-wise the assets `potential_duplicate_to_warn` for entries marked 
 `true` by the parameter `to_warn`, `potential_swap ` for entries marked 
-`true` by the parameter `for_swap`, and `potential_duplicate_to_remove` for 
+`true` by the parameter `for_swap`, and \
+`potential_duplicate_to_remove` for 
 entries marked `true` by the parameter `to_remove`.
 
 *String representation of a row:* also referred to as *row string*; a special 
@@ -1516,7 +1593,8 @@ the parser function `RemoveDuplicatesFrom()`.
 
 The entry-delimiter order for this asset must be different from the asset
 `potential_duplicate_to_remove` for proper duplicate identification for 
-logging purposes at the end of the parser function `RemoveDuplicatesFrom()`.
+logging purposes at the end of the parser function \
+`RemoveDuplicatesFrom()`.
 Being entry-first indicates that a row was a duplicate to warn of.
 
 \
@@ -1544,7 +1622,8 @@ the parser function `RemoveDuplicatesFrom()`.
 
 The entry-delimiter order for this asset must be different from the asset
 `potential_duplicate_to_warn` for proper duplicate identification for 
-logging purposes at the end of the parser function `RemoveDuplicatesFrom()`. 
+logging purposes at the end of the parser function \
+`RemoveDuplicatesFrom()`. 
 Being duplicate-first indicates that a row was a duplicate to remove.
 
 \
@@ -1886,7 +1965,14 @@ When this program is launched, a greeting is first displayed followed by a
 prompt to press ENTER to start this program. Instead of just pressing ENTER, 
 one can instead enter in a specific keyword to run this program in an 
 alternative mode. This program does not continue until a valid keyword is 
-entered. The modes that can be run are described below. Ignore the quotation 
+entered.
+
+This whole process is dictated by the initialization function `init_MODE()`. 
+The mode is stored in its corresponding constant global variable called 
+**MODE**. This should be the very first variable to initialize, even before 
+any of the program parameters (see Program Parameters).
+
+The modes that can be run are described below. Ignore the quotation 
 marks.
 
 **NOTE:** Capitalization does not matter.
@@ -2024,7 +2110,7 @@ parameters.
 
 **NOTE:** Some solutions may require running the custom mode of this 
 program to initialize more advanced parameters (see Advanced Setup; Custom 
-Initialization).
+Mode).
 
 Below are some of the issues that may arise from this program. If an issue is 
 not addressed, report it to the SHF tech administrator. All these suggestions 
