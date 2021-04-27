@@ -1224,7 +1224,7 @@ std::string init_NAME_FORM_PATH()
             {
                 return name;
             }
-            else // path is not valid
+            else // path is not valid; will be prompted for path name again until a valid path is given
             {
                 std::cout << "Path name is invalid. Check for typos or if path exists. Slash direction does not matter." << std::endl;
             }
