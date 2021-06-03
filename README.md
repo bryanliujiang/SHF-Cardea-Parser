@@ -122,7 +122,7 @@ along with the log file.
 
 Below are some alternative ways to run this program.
 
-\
+
 
 ## **Modes**
 
