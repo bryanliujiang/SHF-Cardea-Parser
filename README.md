@@ -395,3 +395,7 @@ view.
 Be sure to have the updated contact information of the SHF tech administrator!
 
 One may also contact Bryan Jiang by email at <bryanjiang@ucla.edu>.
+
+---
+
+This README was adapted from excerpts from the manual itself.
