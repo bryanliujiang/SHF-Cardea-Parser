@@ -122,7 +122,7 @@ along with the log file.
 
 Below are some alternative ways to run this program.
 
-
+<br>
 
 ## **Modes**
 
@@ -165,7 +165,7 @@ Advanced Setup; Accelerated Parameter Initialization) since it allows for
 visible indication that the default of this program is to be run instead of 
 just having a blank line at the top of the document. 
 
-\
+<br>
 
 ### **Custom Mode**
 
@@ -185,7 +185,7 @@ See Program Parameters; Custom-Only (Advanced) Parameters to understand
 the implications of changing a particular advanced parameter from its 
 default value.
 
-\
+<br>
 
 ### **Retain Mode**
 
@@ -207,7 +207,7 @@ Normally, these intermediate files are deleted automatically by the program
 by the function `Parse()`. This mode prevents that from happening. This mode 
 might be useful for debugging purposes. 
 
-\
+<br>
 
 ### **Other Keywords**
 
@@ -217,7 +217,7 @@ modes per se, try entering any of the following keywords and see what happens!
 - "HEART"
 - "SHF"
 
-\
+<br>
 
 ## **Accelerated Parameter Initialization**
 
@@ -281,7 +281,7 @@ Below are some of the issues that may arise from this program. If an issue is
 not addressed, report it to the SHF tech administrator. All these suggestions 
 are assuming this program was compiled or run on a computer using Windows 10.
 
-\
+<br>
 
 ## **[ ERROR ] ... could not be opened or does not exist.**
 
@@ -300,7 +300,7 @@ reason is that this program itself might have been access-restricted upon
 installation (possibly by antivirus software). Try granting exceptions to 
 this program.
 
-\
+<br>
 
 ## **[ ERROR ] Could not open sanitized input file.**
 
@@ -313,7 +313,7 @@ an access-restricted location. Try moving this program to another location
 access-restricted upon installation (possibly by antivirus software). Try 
 granting exceptions to this program.
 
-\
+<br>
 
 ## **[ ERROR ] Could not open output with duplicates file.**
 
@@ -322,7 +322,7 @@ as whatever the parameter **NAME_OUTPUT_DUPLICATES** was initialized to. Also,
 be sure that the parameter **NAME_INPUT_CLEAN** was not initialized with the 
 same name as **NAME_OUTPUT_DUPLICATES**.
 
-\
+<br>
 
 ## **The final Cardea-compatible output file is not appearing.**
 
@@ -341,7 +341,7 @@ initialized with the same names as the parameters **NAME_INPUT_CLEAN** or
 
 If none of these solutions work, contact the administrator.
 
-\
+<br>
 
 ## **Significant portions of the final output file are blank.**
 
@@ -354,7 +354,7 @@ If the final output file is partially blank, check that parameter
 **NAME_ENGLISH** is initialized properly and consistent with what the raw 
 input CSV file requires.
 
-\
+<br>
 
 ## **The final output file is disfigured.**
 
@@ -373,7 +373,7 @@ and selecting "Open with" or by temporarily changing the file extension from
 If none of these solutions work, contact the administrator, as the SHF server 
 may have undergone a formatting change.
 
-\
+<br>
 
 ## **Path name is invalid.**
 
