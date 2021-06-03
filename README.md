@@ -49,9 +49,9 @@ the whole document for the comma delimiter (can be other characters also, see
 Advanced Setup), ignoring commas deemed to be from entries and replacing 
 commas deemed to be delimiters with an alternative character, a "clean" 
 delimiter that can be user-specified ('$' character by default, see Program 
-Parameters; **DELIMITER_CLEAN**) and is not expected to appear within any 
-entry. Once the document is sanitized, it can be manipulated freely without 
-worry of confusion between characters within entries and as delimiters.
+Parameters in the manual; **DELIMITER_CLEAN**) and is not expected to appear 
+within any entry. Once the document is sanitized, it can be manipulated freely 
+without worry of confusion between characters within entries and as delimiters.
 
 ## **Cardea-Compatible Conversion Stage**
 
@@ -92,7 +92,7 @@ given if the less strict criteria are met. This program is also configured
 to detect and warn if patient first and last names are swapped, which might 
 indicate a possible duplicate. Defining these criteria cannot be done through 
 the program interface but must require editing the source code itself, which 
-is explained later in the manual (see Functions and Assets; 
+is explained in the manual (see Functions and Assets in the manual; 
 `track_duplicates_including_this()`). Once duplicates in the document are 
 handled, a finalized output file is produced and ready to be accepted by 
 Cardea.
@@ -135,7 +135,7 @@ entered.
 This whole process is dictated by the initialization function `init_MODE()`. 
 The mode is stored in its corresponding constant global variable called 
 **MODE**. This should be the very first variable to initialize, even before 
-any of the program parameters (see Program Parameters).
+any of the program parameters (see Program Parameters in the manual).
 
 The modes that can be run are described below. Ignore the quotation 
 marks.
@@ -161,7 +161,7 @@ beginning of this program.
 
 Having an explicit keyword for this mode is helpful when running this program 
 from a text file containing the pre-initialized program parameters (see 
-Advanced Setup; Accelerated Parameter Initialization) since it allows for 
+Advanced Setup section; Accelerated Parameter Initialization) since it allows for 
 visible indication that the default of this program is to be run instead of 
 just having a blank line at the top of the document. 
 
@@ -181,9 +181,9 @@ initialization prompt.
 
 **Notes:**
 
-See Program Parameters; Custom-Only (Advanced) Parameters to understand 
-the implications of changing a particular advanced parameter from its 
-default value.
+See Program Parameters in the manual; Custom-Only (Advanced) Parameters 
+to understand the implications of changing a particular advanced 
+parameter from its default value.
 
 <br>
 
@@ -233,7 +233,7 @@ separate text document and then copy and pasting that into this program.
     such as "parameters.txt" (".txt" might already be appended).
     
 1) Enter into the document the desired mode to run this program in (see 
-Advanced Setup; Modes). Press ENTER once to move to the next line.
+Advanced Setup section; Modes). Press ENTER once to move to the next line.
 
     **TIP:** For readability, enter the mode keyword in all caps. That way, 
     one can recognize the mode and distinguish it from the parameter 
@@ -274,8 +274,8 @@ parameters.
 # **Troubleshooting**
 
 **NOTE:** Some solutions may require running the custom mode of this 
-program to initialize more advanced parameters (see Advanced Setup; Custom 
-Mode).
+program to initialize more advanced parameters (see Advanced Setup section; 
+Custom Mode).
 
 Below are some of the issues that may arise from this program. If an issue is 
 not addressed, report it to the SHF tech administrator. All these suggestions 
@@ -363,7 +363,7 @@ initialized properly. This means making sure that the character for
 **DELIMITER_CLEAN** was not used anywhere in the raw input CSV file (a 
 patient may have used and submitted it). If so, initialize **DELIMITER_CLEAN** 
 to an alternative character not present in the raw input CSV file (see 
-Advanced Setup; Custom Mode). Otherwise, check that the raw input 
+Advanced Setup section; Custom Mode). Otherwise, check that the raw input 
 CSV file is delimited by the character set by **DELIMITER_CSV** and 
 initialize accordingly. One way to check is to open the raw input CSV file 
 with a text editor like Notepad (can be done by right-clicking on the file 
